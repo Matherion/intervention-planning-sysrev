@@ -6,7 +6,7 @@
 ### correct path itself.
 
 basePathVector <- c("B:/Data/research/intervention-planning-sysrev",
-                    "");
+                    "/home/oupsyusr/public_html/wim");
 
 ########################################################################
 ### Set the variables with the paths
@@ -26,6 +26,7 @@ outputPath <- basePath;
 ### Packages
 require('userfriendlyscience');
 safeRequire('googlesheets');
+safeRequire('data.tree');
 
 ########################################################################
 ### Load spreadsheet
@@ -42,41 +43,61 @@ dat <- gs_read(gs_url(paste0("https://docs.google.com/spreadsheets/d/",
 ### Process data
 ########################################################################
 
-### Get first two columns
-activities <- dat[, 1];
-descriptions <- dat[, 2];
+dataFrameNetwork <- as.data.frame(dat[!is.na(dat$Identifier),
+                                      unique(c('Identifier', 'Parent', names(dat)))]);
+dataFrameNetwork$Parent[is.na(dataFrameNetwork$Parent)] <- 'res';
+extractionScriptTree <- FromDataFrameNetwork(dataFrameNetwork);
 
-### Remove empty lines
-descriptions <- descriptions[!is.na(activities), ];
-activities <- activities[!is.na(activities), ];
+SetGraphStyle(extractionScriptTree, rankdir = "LR");
 
-### Index organising elements
-organisingLines <- which(is.na(descriptions));
+if (interactive()) {
+  plot(extractionScriptTree));
+}
 
-### Wrap
-activities <- sapply(apply(activities, 1, strwrap, width=72, prefix='###   '),
-                     paste0, collapse="\n");
-descriptions <- sapply(apply(descriptions, 1, strwrap, width=72, prefix='###   '),
-                       paste0, collapse="\n");
+png(filename=file.path(basePath, "wim.png"),
+    width=1000, height=600);
+plot(extractionScriptTree);
+savePlot(filename=file.path(basePath, "wim.png"));
+dev.off();
 
-### Generate first concept of extraction script
-extractionScript <- sapply(1:length(activities), function(i) {
-  if (i %in% organisingLines) {
-    return(paste0(repStr("#", 80), "\n",
-                  repStr("#", 80), "\n###\n",
-                  activities[i], "\n###\n",
-                  repStr("#", 80), "\n",
-                  repStr("#", 80), "\n"));
+extractionScript <- sapply(1:nrow(dat), function(i) {
+  if (is.na(dat[i, 'Identifier'])) {
+    ### If there is an identifier, this is just an organising element,
+    ### assuming there also isn't a description
+    if (is.na(dat[i, 'Description'])) {
+      ### If there is also no description, print the activity, if
+      ### that *is* present
+      if (!is.na(dat[i, 'Activity'])) {
+        return(paste0(repStr("#", 80), "\n",
+                      repStr("#", 80), "\n###\n",
+                      dat[i, 'Activity'], "\n###\n",
+                      repStr("#", 80), "\n",
+                      repStr("#", 80), "\n"));
+      }
+    }
   } else {
-    return(paste0(repStr("#", 80),
-                  "\n### ", names(dat)[1], "\n",
-                  activities[i],
-                  "\n###\n### ", names(dat)[2], "\n",
-                  descriptions[i], "\n"));
+    ### If there is an identifier, this is something to extract. If there
+    ### is a description, it is an item; otherwise just an element
+    ### in the hierarchy
+    if (is.na(dat[i, 'Description'])) {
+      extractionScriptTree$AddChild(dat[i, 'Identifier']);
+      return(paste0("res$", dat[i, 'Identifier'], " <- list()\n\n"));
+    } else {
+      Traverse(extractionScriptTree,
+               dat[i, 'Parent'],
+               traversal = "level")$AddChild(dat[i, 'Identifier']);
+      return(paste0(repStr("#", 80),
+                    "\n### Activity\n",
+                    paste0(strwrap(dat[i, 'Activity'], width=72,
+                                   prefix='###   '), collapse="\n"),
+                    "\n###\n### Description\n",
+                    paste0(strwrap(dat[i, 'Description'], width=72,
+                                   prefix='###   '), collapse="\n"),
+                    "res$", dat[i, 'Identifier'], "\n\n"));
+    }
   }
 });
 
-writeLines(extractionScript,
+writeLines(paste0(extractionScript, collapse=""),
            file.path(basePath,
                      "extraction script template foundation.R"));
-
