@@ -5,3 +5,5 @@
 .httr-oauth*
 *.html
 *.svg
+
+extraction script template foundation.R
