@@ -79,15 +79,24 @@ if (any(nonExistentParents)) {
 
 extractionScriptTree <- FromDataFrameNetwork(dataFrameNetwork);
 
-SetGraphStyle(extractionScriptTree, rankdir = "LR");
+### https://github.com/gluc/data.tree/issues/88
+#SetGraphStyle(extractionScriptTree, rankdir = "LR");
+#plot(extractionScriptTree);
 
-if (interactive()) {
-  plot(extractionScriptTree);
-}
+### Make 
+extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "green",
+                                                    color='green'),
+                        filterFun = function(node) return(ifelse(is.null(node$Repeating), FALSE, node$Repeating)));
 
-treeAsSVG <- export_svg(grViz(ToGraphViz(extractionScriptTree)));
-writeLines(treeAsSVG,
-           file.path(basePath,
+extractionScriptDiagram <- ToDiagrammeRGraph(extractionScriptTree, direction = "descend");
+
+extractionScriptDiagram <- set_global_graph_attrs(extractionScriptDiagram, "layout", "dot", "graph");
+extractionScriptDiagram <- add_global_graph_attrs(extractionScriptDiagram, "rankdir", "LR", "graph")
+
+render_graph(extractionScriptDiagram);
+
+export_graph(extractionScriptDiagram,
+             file_name=file.path(basePath,
                      "extraction script tree.svg"));
 
 # export_graph(grViz(ToGraphViz(extractionScriptTree)),
