@@ -19,7 +19,7 @@ output: html_document
 ### correct path itself.
 
 basePathVector <- c("B:/Data/research/intervention-planning-sysrev",
-                    "/home/oupsyusr/public_html/wim");
+                    "/home/ufs/public_html/wim/intervention-planning-sysrev");
 
 ########################################################################
 ### Set the variables with the paths
