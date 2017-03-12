@@ -19,7 +19,7 @@ output: html_document
 ### correct path itself.
 
 basePathVector <- c("B:/Data/research/intervention-planning-sysrev",
-                    "/home/ufs/public_html/wim/intervention-planning-sysrev");
+                    "/home/usf/public_html/wim/intervention-planning-sysrev");
 
 ########################################################################
 ### Set the variables with the paths
@@ -28,6 +28,7 @@ basePathVector <- c("B:/Data/research/intervention-planning-sysrev",
 ### Check which paths exist and set the first existing path in the list
 ### as the base path
 basePath <- basePathVector[sapply(basePathVector, dir.exists)][1];
+if (is.na(basePath)) stop("None of the basePaths exists!");
 
 ### Set the additional paths
 outputPath <- basePath;
