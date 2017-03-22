@@ -84,10 +84,19 @@ extractionScriptTree <- FromDataFrameNetwork(dataFrameNetwork);
 #SetGraphStyle(extractionScriptTree, rankdir = "LR");
 #plot(extractionScriptTree);
 
-### Make 
+### Set colours
+extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "black",
+                                                    color='black'));
 extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "green",
                                                     color='green'),
                         filterFun = function(node) return(ifelse(is.null(node$Repeating), FALSE, node$Repeating)));
+extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "orange",
+                                                    color='orange'),
+                        filterFun = function(node) return(ifelse(is.null(node$Recursion), FALSE, TRUE)));
+extractionScriptTree$Do(function(node) SetNodeStyle(node, style = "dotted",
+                                                    fontcolor = "orange",
+                                                    color='orange'),
+                        filterFun = function(node) return(ifelse(is.null(node$Recursion), FALSE, ifelse((node$Recursion!='TRUE'), TRUE, FALSE))));
 
 extractionScriptDiagram <- ToDiagrammeRGraph(extractionScriptTree, direction = "descend");
 
