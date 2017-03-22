@@ -92,7 +92,7 @@ extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "green",
 extractionScriptDiagram <- ToDiagrammeRGraph(extractionScriptTree, direction = "descend");
 
 extractionScriptDiagram <- set_global_graph_attrs(extractionScriptDiagram, "layout", "dot", "graph");
-extractionScriptDiagram <- add_global_graph_attrs(extractionScriptDiagram, "rankdir", "LR", "graph")
+extractionScriptDiagram <- add_global_graph_attrs(extractionScriptDiagram, "rankdir", "LR", "graph");
 
 render_graph(extractionScriptDiagram);
 
