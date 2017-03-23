@@ -96,7 +96,11 @@ extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "orange",
 extractionScriptTree$Do(function(node) SetNodeStyle(node, style = "dotted",
                                                     fontcolor = "orange",
                                                     color='orange'),
-                        filterFun = function(node) return(ifelse(is.null(node$Recursion), FALSE, ifelse((node$Recursion!='TRUE'), TRUE, FALSE))));
+                        filterFun = function(node) return(ifelse(is.null(node$Recursion), FALSE,
+                                                                 ifelse((node$Recursion!='TRUE'), TRUE, FALSE))));
+
+extractionScriptTree$Do(function(node) SetNodeStyle(node, tooltip=paste0('DESCRIPTION: ')),
+                        filterFun = function(node) return(ifelse(is.null(node$Description), FALSE, TRUE)));
 
 extractionScriptDiagram <- ToDiagrammeRGraph(extractionScriptTree, direction = "descend");
 
