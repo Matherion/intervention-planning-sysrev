@@ -44,6 +44,7 @@ safeRequire('data.tree');
 safeRequire('networkD3')
 safeRequire('DiagrammeR')
 safeRequire('DiagrammeRsvg')
+safeRequire('xtable')
 
 ########################################################################
 ### Load spreadsheet
@@ -99,7 +100,9 @@ extractionScriptTree$Do(function(node) SetNodeStyle(node, style = "dotted",
                         filterFun = function(node) return(ifelse(is.null(node$Recursion), FALSE,
                                                                  ifelse((node$Recursion!='TRUE'), TRUE, FALSE))));
 
-extractionScriptTree$Do(function(node) SetNodeStyle(node, tooltip=paste0('DESCRIPTION: ')),
+extractionScriptTree$Do(function(node) SetNodeStyle(node, tooltip=paste0('DESCRIPTION: ',
+                                                                         sanitize(node$Description,
+                                                                                  type='html'))),
                         filterFun = function(node) return(ifelse(is.null(node$Description), FALSE, TRUE)));
 
 extractionScriptDiagram <- ToDiagrammeRGraph(extractionScriptTree, direction = "descend");
