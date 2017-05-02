@@ -1,15 +1,11 @@
 ---
 title: "Data Extraction Structure"
 author: "Gjalt-Jorn Ygram Peters"
-date: "8 February 2017"
+date: "`r format(Sys.time(), '%Y-%m-%d om %X');`"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-  knitr::opts_chunk$set(echo = FALSE);
-```
-
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, echo=FALSE}
 
 ########################################################################
 ### Paths
@@ -85,25 +81,57 @@ extractionScriptTree <- FromDataFrameNetwork(dataFrameNetwork);
 #SetGraphStyle(extractionScriptTree, rankdir = "LR");
 #plot(extractionScriptTree);
 
-### Set colours
+### Set generic styles
 extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "black",
-                                                    color='black'));
-extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "green",
-                                                    color='green'),
+                                                    color='black', shape="box",
+                                                    style="rounded"));
+
+wrap <- function(string, width=40) {
+  return(paste0(strwrap(string, width=width), collapse="\n"));
+}
+
+##################################################################################
+### Set specific styles
+
+### Set parent-only nodes to grey
+extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "grey",
+                                                    label = node$Activity,
+                                                    color='grey'),
+                        filterFun = function(node) return(ifelse(is.null(node$Description), TRUE, FALSE)));
+
+### Set regular nodes
+extractionScriptTree$Do(function(node) SetNodeStyle(node, color='black', fontcolor='black',
+                                                    shape="box", style="rounded",
+                                                    label = paste0(wrap(node$Activity,
+                                                                        width=60), "\n\n",
+                                                                   wrap(node$Description,
+                                                                           width=60))),
+                        filterFun = function(node) return(ifelse(is.null(node$Description), FALSE, TRUE)));
+
+extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "green", color='green',
+                                                    shape="box", style="rounded",
+                                                    label = paste0(wrap(node$Activity,
+                                                                        width=60), "\n\n",
+                                                                   wrap(node$Description,
+                                                                        width=60))),
                         filterFun = function(node) return(ifelse(is.null(node$Repeating), FALSE, node$Repeating)));
-extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "orange",
-                                                    color='orange'),
+
+extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "orange", color='orange',
+                                                    shape="box", style="rounded",
+                                                    label = paste0(wrap(node$Activity,
+                                                                        width=60), "\n\n",
+                                                                   wrap(node$Description,
+                                                                        width=60))),
                         filterFun = function(node) return(ifelse(is.null(node$Recursion), FALSE, TRUE)));
-extractionScriptTree$Do(function(node) SetNodeStyle(node, style = "dotted",
-                                                    fontcolor = "orange",
-                                                    color='orange'),
+
+extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "orange", color='orange',
+                                                    shape="box", style="rounded, dotted",
+                                                    label = paste0(wrap(node$Activity,
+                                                                        width=60), "\n\n",
+                                                                   wrap(node$Description,
+                                                                        width=60))),
                         filterFun = function(node) return(ifelse(is.null(node$Recursion), FALSE,
                                                                  ifelse((node$Recursion!='TRUE'), TRUE, FALSE))));
-
-extractionScriptTree$Do(function(node) SetNodeStyle(node, tooltip=paste0('DESCRIPTION: ',
-                                                                         sanitize(node$Description,
-                                                                                  type='html'))),
-                        filterFun = function(node) return(ifelse(is.null(node$Description), FALSE, TRUE)));
 
 extractionScriptDiagram <- ToDiagrammeRGraph(extractionScriptTree, direction = "descend");
 
@@ -120,60 +148,95 @@ export_graph(extractionScriptDiagram,
 #              file_name=file.path(basePath,
 #                      "extraction script tree.png"));
 
+# returnPathToRoot <- function(node) {
+#   if (node$isRoot) return(node$name) else return(list(node$name, returnPathToRoot(node$parent)));
+# }
+
 returnPathToRoot <- function(node) {
-  if (node$isRoot) return(node$name) else return(list(node$name, returnPathToRoot(node$parent)));
+  return(paste0(rev(unlist(sapply(Traverse(node, traversal='ancestor'),
+                                  function(x) return(x$name)),
+                           recursive=TRUE)), collapse="$"));
 }
 
-extractionScriptStructurePreparation <- 
-  paste0(sapply(sapply(Traverse(extractionScriptTree,
-                  traversal="level",
-                  filterFun=isNotLeaf),
-         function(node) return(returnPathToRoot(node))),
-         function(x) return(paste0(rev(unlist(x)), collapse="$"))), " <- list();\n", collapse="");
+extractionScriptStructurePreparation <-
+  paste0(sapply(Traverse(extractionScriptTree,
+                         traversal="level",
+                         filterFun=isNotLeaf),
+                function(node) return(returnPathToRoot(node))),
+         " <- list();\n", collapse="");
 
-lapply(Traverse(extractionScriptTree,
-                traversal="level",
-                filterFun=isLeaf),
-       function(x) return(x$level));
+extractionScriptBody <-
+  paste0(sapply(Traverse(extractionScriptTree,
+                         traversal="pre-order"),
+                function(x) {
+                  if (isNotLeaf(x)) {
+                    res <- paste0(repStr("#", 80), "\n",
+                                  repStr("#", 80), "\n",
+                                  "### ", x$Activity, "\n",
+                                  repStr("#", 80), "\n",
+                                  repStr("#", 80), "\n");
+                  } else {
+                    res <- paste0(repStr("#", 80),
+                                  "\n### Activity\n",
+                                  paste0(strwrap(x$Activity, width=72,
+                                                 prefix='###   '),
+                                         collapse="\n"),
+                                  "\n###\n### Description\n",
+                                  paste0(strwrap(x$Description, width=72,
+                                                 prefix='###   '),
+                                         collapse="\n"), "\n",
+                                  repStr("#", 80), "\n\n",
+                                  "Identifier: ", x$Identifier, "\n",
+                                  "Parent: ", x$Parent, "\n",
+                                  "Repeating: ", x$Repeating, "\n",
+                                  "Recursion: ", x$Recursion, "\n",
+                                  "Collapse: ", x$Collapse, "\n",
+                                  "\n");
+                  }
+                  return(res);
+                }), "\n", collapse="\n");
 
-extractionScript <- sapply(1:nrow(dat), function(i) {
-  if (is.na(dat[i, 'Identifier'])) {
-    ### If there is an identifier, this is just an organising element,
-    ### assuming there also isn't a description
-    if (is.na(dat[i, 'Description'])) {
-      ### If there is also no description, print the activity, if
-      ### that *is* present
-      if (!is.na(dat[i, 'Activity'])) {
-        return(paste0(repStr("#", 80), "\n",
-                      repStr("#", 80), "\n###\n",
-                      dat[i, 'Activity'], "\n###\n",
-                      repStr("#", 80), "\n",
-                      repStr("#", 80), "\n"));
-      }
-    }
-  } else {
-    ### If there is an identifier, this is something to extract. If there
-    ### is a description, it is an item; otherwise just an element
-    ### in the hierarchy
-    if (is.na(dat[i, 'Description'])) {
-      
-      
-      
-      ToDataFrameTypeCol(extractionScriptTree);
-      
-      return(paste0("res$", dat[i, 'Identifier'], " <- list()\n\n"));
-    } else {
-      return(paste0(repStr("#", 80),
-                    "\n### Activity\n",
-                    paste0(strwrap(dat[i, 'Activity'], width=72,
-                                   prefix='###   '), collapse="\n"),
-                    "\n###\n### Description\n",
-                    paste0(strwrap(dat[i, 'Description'], width=72,
-                                   prefix='###   '), collapse="\n"),
-                    "res$", dat[i, 'Identifier'], "\n\n"));
-    }
-  }
-});
+extractionScript <- paste0(extractionScriptStructurePreparation,
+                           extractionScriptBody);
+
+# extractionScript <- sapply(1:nrow(dat), function(i) {
+#   if (is.na(dat[i, 'Identifier'])) {
+#     ### If there is an identifier, this is just an organising element,
+#     ### assuming there also isn't a description
+#     if (is.na(dat[i, 'Description'])) {
+#       ### If there is also no description, print the activity, if
+#       ### that *is* present
+#       if (!is.na(dat[i, 'Activity'])) {
+#         return(paste0(repStr("#", 80), "\n",
+#                       repStr("#", 80), "\n###\n",
+#                       dat[i, 'Activity'], "\n###\n",
+#                       repStr("#", 80), "\n",
+#                       repStr("#", 80), "\n"));
+#       }
+#     }
+#   } else {
+#     ### If there is an identifier, this is something to extract. If there
+#     ### is a description, it is an item; otherwise just an element
+#     ### in the hierarchy
+#     if (is.na(dat[i, 'Description'])) {
+# 
+# 
+# 
+#       ToDataFrameTypeCol(extractionScriptTree);
+# 
+#       return(paste0("res$", dat[i, 'Identifier'], " <- list()\n\n"));
+#     } else {
+#       return(paste0(repStr("#", 80),
+#                     "\n### Activity\n",
+#                     paste0(strwrap(dat[i, 'Activity'], width=72,
+#                                    prefix='###   '), collapse="\n"),
+#                     "\n###\n### Description\n",
+#                     paste0(strwrap(dat[i, 'Description'], width=72,
+#                                    prefix='###   '), collapse="\n"),
+#                     "res$", dat[i, 'Identifier'], "\n\n"));
+#     }
+#   }
+# });
 
 writeLines(paste0(extractionScript, collapse=""),
            file.path(basePath,
