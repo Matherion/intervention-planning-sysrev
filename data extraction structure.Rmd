@@ -144,14 +144,6 @@ export_graph(extractionScriptDiagram,
              file_name=file.path(basePath,
                      "extraction script tree.svg"));
 
-# export_graph(grViz(ToGraphViz(extractionScriptTree)),
-#              file_name=file.path(basePath,
-#                      "extraction script tree.png"));
-
-# returnPathToRoot <- function(node) {
-#   if (node$isRoot) return(node$name) else return(list(node$name, returnPathToRoot(node$parent)));
-# }
-
 returnPathToRoot <- function(node) {
   return(paste0(rev(unlist(sapply(Traverse(node, traversal='ancestor'),
                                   function(x) return(x$name)),
@@ -205,6 +197,8 @@ writeLines(paste0(extractionScript, collapse=""),
 
 ###############################################################################
 
+### http://stackoverflow.com/questions/3665115/create-a-file-in-memory-for-user-to-download-not-through-server
+
 checklistBody <-
   paste0("<html><body>",
          sapply(Traverse(extractionScriptTree,
@@ -231,5 +225,14 @@ writeLines(paste0(checklistBody, collapse=""),
                      "checklist.html"));
 
 ###############################################################################
+
+
+# export_graph(grViz(ToGraphViz(extractionScriptTree)),
+#              file_name=file.path(basePath,
+#                      "extraction script tree.png"));
+
+# returnPathToRoot <- function(node) {
+#   if (node$isRoot) return(node$name) else return(list(node$name, returnPathToRoot(node$parent)));
+# }
 
 ```
