@@ -186,7 +186,7 @@ extractionScriptBody <-
                                                  prefix='###   '),
                                          collapse="\n"), "\n",
                                   repStr("#", 80), "\n\n",
-                                  "Identifier: ", x$Identifier, "\n",
+                                  "Identifier: ", x$name, "\n",
                                   "Parent: ", x$Parent, "\n",
                                   "Repeating: ", x$Repeating, "\n",
                                   "Recursion: ", x$Recursion, "\n",
@@ -199,47 +199,37 @@ extractionScriptBody <-
 extractionScript <- paste0(extractionScriptStructurePreparation,
                            extractionScriptBody);
 
-# extractionScript <- sapply(1:nrow(dat), function(i) {
-#   if (is.na(dat[i, 'Identifier'])) {
-#     ### If there is an identifier, this is just an organising element,
-#     ### assuming there also isn't a description
-#     if (is.na(dat[i, 'Description'])) {
-#       ### If there is also no description, print the activity, if
-#       ### that *is* present
-#       if (!is.na(dat[i, 'Activity'])) {
-#         return(paste0(repStr("#", 80), "\n",
-#                       repStr("#", 80), "\n###\n",
-#                       dat[i, 'Activity'], "\n###\n",
-#                       repStr("#", 80), "\n",
-#                       repStr("#", 80), "\n"));
-#       }
-#     }
-#   } else {
-#     ### If there is an identifier, this is something to extract. If there
-#     ### is a description, it is an item; otherwise just an element
-#     ### in the hierarchy
-#     if (is.na(dat[i, 'Description'])) {
-# 
-# 
-# 
-#       ToDataFrameTypeCol(extractionScriptTree);
-# 
-#       return(paste0("res$", dat[i, 'Identifier'], " <- list()\n\n"));
-#     } else {
-#       return(paste0(repStr("#", 80),
-#                     "\n### Activity\n",
-#                     paste0(strwrap(dat[i, 'Activity'], width=72,
-#                                    prefix='###   '), collapse="\n"),
-#                     "\n###\n### Description\n",
-#                     paste0(strwrap(dat[i, 'Description'], width=72,
-#                                    prefix='###   '), collapse="\n"),
-#                     "res$", dat[i, 'Identifier'], "\n\n"));
-#     }
-#   }
-# });
-
 writeLines(paste0(extractionScript, collapse=""),
            file.path(basePath,
                      "extraction script template foundation.R"));
+
+###############################################################################
+
+checklistBody <-
+  paste0("<html><body>",
+         sapply(Traverse(extractionScriptTree,
+                         traversal="pre-order"),
+                function(x) {
+                  if (isNotLeaf(x)) {
+                    lvl <- 2; #x$level;
+                    res <- paste0("<h", lvl, ">", x$ChecklistTitle, "</h", lvl, ">\n");
+                  } else {
+                    lvl <- 3; #x$level;
+                    id <- x$name;
+                    res <- paste0("<h", lvl, ">",
+                                  "<input type='checkbox' name='", id, "' />",
+                                  "<label for='", id, "'>",
+                                  x$ChecklistTitle, "</label></h", lvl, ">\n",
+                                  "<p>", x$ChecklistDescription, "</p>",
+                                  "<p><em>In the IM book at page", x$BookReference, " and further.</em></p>");
+                  }
+                  return(res);
+                }), "\n</body></html>\n", collapse="\n");
+
+writeLines(paste0(checklistBody, collapse=""),
+           file.path(basePath,
+                     "checklist.html"));
+
+###############################################################################
 
 ```
