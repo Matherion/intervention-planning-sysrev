@@ -161,7 +161,29 @@ extractionScriptBody <-
   paste0(sapply(Traverse(extractionScriptTree,
                          traversal="pre-order"),
                 function(x) {
-                  if (isNotLeaf(x)) {
+                  if ((length(Get(x$children, 'isLeaf')) > 0)
+                    && all(Get(x$children, 'isLeaf'))) {
+                    res <- paste0(repStr("#", 80),
+                                  "\n### Activity (all children are properties)\n",
+                                  paste0(strwrap(x$Activity, width=72,
+                                                 prefix='###   '),
+                                         collapse="\n"),
+                                  "\n###\n### Description\n",
+                                  paste0(strwrap(x$Description, width=72,
+                                                 prefix='###   '),
+                                         collapse="\n"), "\n",
+                                  repStr("#", 80), "\n\n");
+                    res <- paste0(res,
+                                  returnPathToRoot(x),
+                                  "\n  [[length(", returnPathToRoot(x), ")+1]] <-\n    list();\n",
+                                  "Identifier: ", x$name, "\n",
+                                  "Parent: ", x$parent$name, "\n",
+                                  "Children: ", vecTxtQ(Get(x$children, 'name')), "\n",
+                                  "Repeating: ", x$Repeating, "\n",
+                                  "Recursion: ", x$Recursion, "\n",
+                                  "Collapse: ", x$Collapse, "\n",
+                                  "\n");
+                  } else if (isNotLeaf(x)) {
                     res <- paste0(repStr("#", 80), "\n",
                                   repStr("#", 80), "\n",
                                   "### ", x$Activity, "\n",
@@ -179,7 +201,7 @@ extractionScriptBody <-
                                          collapse="\n"), "\n",
                                   repStr("#", 80), "\n\n",
                                   "Identifier: ", x$name, "\n",
-                                  "Parent: ", x$Parent, "\n",
+                                  "Parent: ", x$parent$name, "\n",
                                   "Repeating: ", x$Repeating, "\n",
                                   "Recursion: ", x$Recursion, "\n",
                                   "Collapse: ", x$Collapse, "\n",
