@@ -50,8 +50,15 @@ safeRequire('xtable')
 #gs_auth(new_user=TRUE);
 
 ### Read google sheet
-dat <- gs_read(gs_url(paste0("https://docs.google.com/spreadsheets/d/",
-                             "1g__lA6Qd8x9UcUMIZGq_xMcZt584sJ-1sMaLmxm3nUU")));
+
+tryCatch({
+  dat <- gs_read(gs_url(paste0("https://docs.google.com/spreadsheets/d/",
+                               "1g__lA6Qd8x9UcUMIZGq_xMcZt584sJ-1sMaLmxm3nUU")));
+  write.csv(dat,
+            file.path(basePath, 'wim-googlesheet.csv'));},
+  error = function(e) {
+    dat <- read.csv(file.path(basePath, 'wim-googlesheet.csv'));
+  });
 
 ########################################################################
 ### Process data
@@ -161,8 +168,35 @@ extractionScriptBody <-
   paste0(sapply(Traverse(extractionScriptTree,
                          traversal="pre-order"),
                 function(x) {
-                  if ((length(Get(x$children, 'isLeaf')) > 0)
-                    && all(Get(x$children, 'isLeaf'))) {
+
+                  if (length(Get(x$children, 'isLeaf')) > 0) {
+                    
+                    res <- paste0(repStr("#", 80),
+                                  "\n### Activity (at least some children are properties)\n",
+                                  paste0(strwrap(x$Activity, width=72,
+                                                 prefix='###   '),
+                                         collapse="\n"),
+                                  "\n###\n### Description\n",
+                                  paste0(strwrap(x$Description, width=72,
+                                                 prefix='###   '),
+                                         collapse="\n"), "\n",
+                                  repStr("#", 80), "\n\n");
+                    res <- paste0(res,
+                                  returnPathToRoot(x),
+                                  "\n  [[length(", returnPathToRoot(x), ")+1]] <-\n    list(\n");
+                    
+                    res <- paste0(res,
+                                  paste0(sapply(Traverse(x$children, traversal="pre-order",
+                                                pruneFun=isLeaf), function(xx) {
+                                           if (isLeaf(xx)) {
+                                             return(paste0("          ", xx$name));
+                                           } else {
+                                             return(isLeaf(xx));
+                                           }
+                                         }), collapse=" = NA\n        ,\n"),
+                                  " = NA\n        );");
+                  } else if 
+                  (all(Get(x$children, 'isLeaf'))) {
                     res <- paste0(repStr("#", 80),
                                   "\n### Activity (all children are properties)\n",
                                   paste0(strwrap(x$Activity, width=72,
