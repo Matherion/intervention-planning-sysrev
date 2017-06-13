@@ -183,7 +183,7 @@ returnPathToRoot <- function(node, considerRoot = rootName) {
   res <- paste0(rev(unlist(sapply(Traverse(node, traversal='ancestor'),
                                   function(x) return(x$name)),
                            recursive=TRUE)), collapse="$");
-  res <- gsub(paste0(".*", considerRoot, "\\$"), "\\$", res);
+  res <- gsub(paste0(".*", considerRoot), "", res);
   return(res);
 }
 
@@ -243,7 +243,8 @@ hasOwner <- function(x) {
   }
 }
 
-leafExtractionscript <- function(node, lvlSpaces="  ") {
+leafExtractionscript <- function(node, lvlSpaces="  ",
+                                 recursionNesting=0) {
   #### Initialize values
   addScoring <- FALSE;
   extraInfo <- "";
@@ -260,7 +261,7 @@ leafExtractionscript <- function(node, lvlSpaces="  ") {
     ### it is not an instance of a recursive fragment.
     rslt <- paste0(rslt, "\n",
                    lvlSpaces, "###\n",
-                   paste0(strwrap(node$Get('Description'),
+                   paste0(strwrap(node[[descriptionColName]],
                                   width=76-lvlnchar, prefix=paste0(lvlSpaces, "### ")),
                           collapse="\n"), "\n",
                    "\n",
@@ -268,9 +269,10 @@ leafExtractionscript <- function(node, lvlSpaces="  ") {
                    "\n");
     addScoring <- TRUE;
   } else if (isRepeating(node$Get(repeatingColName)) && !isRecursive(node$Get(recursionColName))) {
+    ### This node is repeating but not recursive, so a simple list with named elements will do.
     rslt <- paste0(rslt, "\n",
                    lvlSpaces, "###\n",
-                   paste0(strwrap(node$Get('Description'),
+                   paste0(strwrap(node[[descriptionColName]],
                                   width=76-lvlnchar, prefix=paste0(lvlSpaces, "### ")),
                           collapse="\n"), "\n",
                    lvlSpaces, "###\n",
@@ -286,20 +288,18 @@ leafExtractionscript <- function(node, lvlSpaces="  ") {
                           node[[ownerColName]],
                           "' element!");
     }
-  } else if (!isRepeating(node$Get(repeatingColName)) && isRecursive(node$Get(recursionColName))) {
+  } else if (isRecursive(node[[recursionColName]])) {
+    ### This node is recursive, and so probably repeating.
     rslt <- paste0(rslt, "\n",
                    lvlSpaces, "###\n",
-                   paste0(strwrap(node$Get('Description'),
+                   paste0(strwrap(node[[descriptionColName]],
                                   width=76-lvlnchar, prefix=paste0(lvlSpaces, "### ")),
                           collapse="\n"), "\n",
-                   lvlSpaces, "### This node is recursive!");
-  } else if (isRepeating(node$Get(repeatingColName)) && isRecursive(node$Get(recursionColName))) {
-    rslt <- paste0(rslt, "\n",
                    lvlSpaces, "###\n",
-                   paste0(strwrap(node$Get('Description'),
-                                  width=76-lvlnchar, prefix=paste0(lvlSpaces, "### ")),
-                          collapse="\n"), "\n",
-                   lvlSpaces, "### This node is repeating and recursive!");
+                   lvlSpaces, "### This node is recursive! Scroll down to the section marked",
+                   lvlSpaces, "### 'RECURSIVE ELEMENTS' and select the lines corresponding to ",
+                   lvlSpaces, "### recursive element '", node[[recursionColName]], "'.",
+                   lvlSpaces, "### Copy-paste those here.");
   }
   ### Add scoring, if necessary
   if (addScoring) {
@@ -327,6 +327,9 @@ rootLevel <- FindNode(extractionScriptTree, name=rootName)$level;
 
 FindNode(extractionScriptTree, name=rootName)$Do(function(node) {
 
+  ### We're just starting, so we're not in any nested recursions yet
+  recursionNesting <- 0;
+  
   if (node$name == rootName) {
     node$extractionscript <- paste0("### Create data.tree object\n",
                                     "res <- Node$new('", rootName, "');\n");
@@ -335,26 +338,33 @@ FindNode(extractionScriptTree, name=rootName)$Do(function(node) {
     lvlSpaces <- repStr(lvlIndentString, node$level - rootLevel - 1);
     lvlnchar <- nchar(lvlSpaces);
 
-    node$extractionscript <- paste0(lvlSpaces,
-                                    "res",
-                                    returnPathToRoot(node$parent),
-                                    "$AddChild('", node$name, "');");
-    if (isCollapsing(GetAttribute(node, collapsingColName))) {
-      node$extractionscript <- paste0(node$extractionscript,
-                                      "\n",
-                                      lvlSpaces,
-                                      returnPathToRoot(node), "[['",
-                                      collapsingColName,
-                                      "']] <- '",
-                                      GetAttribute(node, collapsingColName), "';");
+    if (!isRecursive(node[[recursionColName]])) {
+      
+      ### If this node is recursive, we shouldn't create the child yet,
+      ### And we shouldn't start setting the value yet.
+      
+      node$extractionscript <- paste0(lvlSpaces,
+                                      "res",
+                                      returnPathToRoot(node$parent),
+                                      "$AddChild('", node$name, "');");
+      if (isCollapsing(GetAttribute(node, collapsingColName))) {
+        node$extractionscript <- paste0(node$extractionscript,
+                                        "\n",
+                                        lvlSpaces,
+                                        "res",
+                                        returnPathToRoot(node), "[['",
+                                        collapsingColName,
+                                        "']] <- '",
+                                        GetAttribute(node, collapsingColName), "';");
+      }
+      if (isLeaf(node)) {
+        ### Start the statement to set the value
+        node$extractionscript <- paste0(node$extractionscript, "\n",
+                                        lvlSpaces,
+                                        returnPathToRoot(node), "[['", valueName, "']] <-");
+      }
     }
-    if (isLeaf(node)) {
-      ### Start the statement to set the value
-      node$extractionscript <- paste0(node$extractionscript, "\n",
-                                      lvlSpaces,
-                                      returnPathToRoot(node), "[['", valueName, "']] <-");
-    }
-
+    
     if (isNotLeaf(node)) {
       ### So this node has children ('leaves'), which means that the node itself
       ### does not represent any coded element; it's just used for organisation.
@@ -367,12 +377,14 @@ FindNode(extractionScriptTree, name=rootName)$Do(function(node) {
                                       "\n", lvlSpaces, "###",
                                       "\n", lvlSpaces,repStr("#", 80-lvlnchar), "\n");
     } else {
+      ### Run the script to create the code for the scoring of this extraction script bit
       node$extractionscript <-
         paste0(node$extractionscript, "\n",
                leafExtractionscript(node,
-                                    lvlSpaces=lvlSpaces));
+                                    lvlSpaces=lvlSpaces,
+                                    recursionNesting=recursionNesting));
     }
-
+      
   }
 });
 
