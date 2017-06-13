@@ -183,7 +183,7 @@ returnPathToRoot <- function(node, considerRoot = rootName) {
   res <- paste0(rev(unlist(sapply(Traverse(node, traversal='ancestor'),
                                   function(x) return(x$name)),
                            recursive=TRUE)), collapse="$");
-  res <- gsub(paste0(".*", omit, "\\$"), "\\$", res);
+  res <- gsub(paste0(".*", considerRoot, "\\$"), "\\$", res);
   return(res);
 }
 
