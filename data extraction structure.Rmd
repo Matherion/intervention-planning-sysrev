@@ -52,11 +52,14 @@ safeRequire('xtable')
 ### Read google sheet
 
 tryCatch({
-  dat <- gs_read(gs_url(paste0("https://docs.google.com/spreadsheets/d/",
-                               "1g__lA6Qd8x9UcUMIZGq_xMcZt584sJ-1sMaLmxm3nUU")));
-  write.csv(dat,
-            file.path(basePath, 'wim-googlesheet.csv'));},
+    dat <- gs_read(gs_url(paste0("https://docs.google.com/spreadsheets/d/",
+                                 "1g__lA6Qd8x9UcUMIZGq_xMcZt584sJ-1sMaLmxm3nUU")));
+    cat0("\nStoring in local file.\n");
+    write.csv(dat,
+              file.path(basePath, 'wim-googlesheet.csv'));
+  },
   error = function(e) {
+    cat0("\nReading from local file.\n");
     dat <- read.csv(file.path(basePath, 'wim-googlesheet.csv'));
   });
 
@@ -145,11 +148,13 @@ extractionScriptDiagram <- ToDiagrammeRGraph(extractionScriptTree, direction = "
 extractionScriptDiagram <- set_global_graph_attrs(extractionScriptDiagram, "layout", "dot", "graph");
 extractionScriptDiagram <- add_global_graph_attrs(extractionScriptDiagram, "rankdir", "LR", "graph");
 
-render_graph(extractionScriptDiagram);
+### Temporary to speed up the rest
 
-export_graph(extractionScriptDiagram,
-             file_name=file.path(basePath,
-                     "extraction script tree.svg"));
+# render_graph(extractionScriptDiagram);
+# 
+# export_graph(extractionScriptDiagram,
+#              file_name=file.path(basePath,
+#                      "extraction script tree.svg"));
 
 returnPathToRoot <- function(node) {
   return(paste0(rev(unlist(sapply(Traverse(node, traversal='ancestor'),
@@ -164,39 +169,123 @@ extractionScriptStructurePreparation <-
                 function(node) return(returnPathToRoot(node))),
          " <- list();\n", collapse="");
 
+isCollapsing <- function(x) {
+  if (is.null(x)) {
+    return(FALSE);
+  } else if (is.na(x)) {
+    return(FALSE);
+  } else if (nchar(x) == 0) {
+    return(FALSE);
+  } else if (trim(toupper(x)) == "OR") {
+    return(TRUE);
+  } else if (trim(toupper(x)) == "AND") {
+    return(TRUE);
+  } else {
+    stop("For 'Recursion', value '", x, "' encountered.");
+  }
+}
+
+isRecursive <- function(x) {
+  if (is.null(x)) {
+    return(FALSE);
+  } else if (is.na(x)) {
+    return(FALSE);
+  } else if (nchar(x) == 0) {
+    return(FALSE);
+  } else if (nchar(trim(x)) > 0) {
+    return(TRUE);
+  }
+}
+
 extractionScriptBody <-
   paste0(sapply(Traverse(extractionScriptTree,
-                         traversal="pre-order"),
+                         traversal="pre-order",
+                         filterFun=isNotRoot),
                 function(x) {
 
-                  if (length(Get(x$children, 'isLeaf')) > 0) {
+                  if (any(Get(x$children, isLeaf)) && (length(Get(x$children, isLeaf)) > 0)) {
+
+                    ### Conveniently prune all branches, but not the entire (sub)-tree
+                    pruneChildBranches <- function(node, minlevel=x$level) {
+                      return(ifelse((node$level == minlevel) || isLeaf(node),
+                                    TRUE, FALSE));
+                      };
                     
+                    childLeaves <- Traverse(x,
+                                            traversal='pre-order',
+                                            pruneFun=pruneChildBranches,
+                                            filterFun=isLeaf);
+
+                    ### Preparing the fields for printing
+                    parsedChildren <- Get(childLeaves, function(node) {
+                      
+                      if (is.na(node$Get('Scoring'))) {
+                        node$Scoring <- "";
+                      }
+                      
+                      if (!is.character(node$Get('Scoring'))) {
+                        stop("'Scoring' has non-character value, specifically '",
+                             node$Get('Scoring'),
+                             "' (for '", node$name, "'),");
+                      }
+                      
+                      if (!isTRUE(node$Repeating) && !isRecursive(node$Recursion)) {
+                        ### This element does not repeat and is not a recursion element,
+                        ### so we only need to show what is required to score it
+                        return(paste0("          ", repStr("#", 70), "\n",
+                                      paste0(strwrap(toupper(node$Get('Activity')),
+                                                     width=70, prefix="          ### "),
+                                             collapse="\n"),
+                                      "\n          ###\n",
+                                      paste0(strwrap(node$Get('Description'),
+                                                     width=70, prefix="          ### "),
+                                             collapse="\n"),
+                                      "\n          ",
+                                      "\n          ", node$Get('name'), " = NA",
+                                      "\n          \n",
+                                      paste0(sapply(strsplit(node$Get('Scoring'), "|", fixed=TRUE),
+                                                    function(x) {
+                                                      return(strwrap(trim(x), width=70,
+                                                                     prefix="          ### "))
+                                                      }),
+                                             collapse="\n"),
+                                      "\n          ", repStr("#", 70)));
+                      } else if (isTRUE(node$Repeating == TRUE) && !isRecursive(node$Recursion)) {
+                        ### So this is a repeating element, but not recursive.
+                        return(paste0("          ", repStr("#", 70), "\n",
+                                      "          ### This is a repeating element.",
+                                      "\n          ", node$name, "",
+                                      "\n          ", node$Owner, "",
+                                      "\n          ", repStr("#", 70)));
+                      } else if (!isTRUE(node$Repeating == TRUE) && isRecursive(node$Recursion)) {
+                        ### So this is not a repeating element, but it is recursive.
+                        return(paste0("          ", repStr("#", 70), "\n",
+                                      "          ### This is a repeating element.",
+                                      "\n          ", repStr("#", 70)));
+                      } else if (isTRUE(node$Repeating == TRUE) && isRecursive(node$Recursion)) {
+                        ### So this is a repeating element and a recursive one.
+                        return(paste0("          ", repStr("#", 70), "\n",
+                                      "          ### This is a repeating element.",
+                                      "\n          ", repStr("#", 70)));
+                      }
+                    });
+
                     res <- paste0(repStr("#", 80),
-                                  "\n### Activity (at least some children are properties)\n",
+                                  "\n", 
                                   paste0(strwrap(x$Activity, width=72,
-                                                 prefix='###   '),
-                                         collapse="\n"),
-                                  "\n###\n### Description\n",
-                                  paste0(strwrap(x$Description, width=72,
-                                                 prefix='###   '),
-                                         collapse="\n"), "\n",
-                                  repStr("#", 80), "\n\n");
+                                                 prefix='### '),
+                                         collapse="\n\n"),
+                                  "\n", repStr("#", 80), "\n\n");
                     res <- paste0(res,
                                   returnPathToRoot(x),
                                   "\n  [[length(", returnPathToRoot(x), ")+1]] <-\n    list(\n");
-                    
+
                     res <- paste0(res,
-                                  paste0(sapply(Traverse(x$children, traversal="pre-order",
-                                                pruneFun=isLeaf), function(xx) {
-                                           if (isLeaf(xx)) {
-                                             return(paste0("          ", xx$name));
-                                           } else {
-                                             return(isLeaf(xx));
-                                           }
-                                         }), collapse=" = NA\n        ,\n"),
-                                  " = NA\n        );");
-                  } else if 
-                  (all(Get(x$children, 'isLeaf'))) {
+                                  paste0(parsedChildren,
+                                         collapse="\n        ,\n"),
+                                  "\n        );");
+
+                  } else if (all(Get(x$children, 'isLeaf'))) {
                     res <- paste0(repStr("#", 80),
                                   "\n### Activity (all children are properties)\n",
                                   paste0(strwrap(x$Activity, width=72,
@@ -217,6 +306,7 @@ extractionScriptBody <-
                                   "Recursion: ", x$Recursion, "\n",
                                   "Collapse: ", x$Collapse, "\n",
                                   "\n");
+                    res <- "";
                   } else if (isNotLeaf(x)) {
                     res <- paste0(repStr("#", 80), "\n",
                                   repStr("#", 80), "\n",
@@ -240,6 +330,7 @@ extractionScriptBody <-
                                   "Recursion: ", x$Recursion, "\n",
                                   "Collapse: ", x$Collapse, "\n",
                                   "\n");
+                    res <- "";
                   }
                   return(res);
                 }), "\n", collapse="\n");
