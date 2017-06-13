@@ -296,10 +296,10 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
                                   width=76-lvlnchar, prefix=paste0(lvlSpaces, "### ")),
                           collapse="\n"), "\n",
                    lvlSpaces, "###\n",
-                   lvlSpaces, "### This node is recursive! Scroll down to the section marked",
-                   lvlSpaces, "### 'RECURSIVE ELEMENTS' and select the lines corresponding to ",
-                   lvlSpaces, "### recursive element '", node[[recursionColName]], "'.",
-                   lvlSpaces, "### Copy-paste those here.");
+                   lvlSpaces, "### This node is recursive! Scroll down to the section marked\n",
+                   lvlSpaces, "### 'RECURSIVE ELEMENTS' and select the lines corresponding to \n",
+                   lvlSpaces, "### recursive element '", node[[recursionColName]], "'.\n",
+                   lvlSpaces, "### Copy-paste those here.\n");
   }
   ### Add scoring, if necessary
   if (addScoring) {
