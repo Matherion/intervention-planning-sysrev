@@ -174,10 +174,10 @@ extractionScriptDiagram <- add_global_graph_attrs(extractionScriptDiagram, "rank
 ### Temporary to speed up the rest
 
 # render_graph(extractionScriptDiagram);
-# 
-# export_graph(extractionScriptDiagram,
-#              file_name=file.path(basePath,
-#                      "extraction script tree.svg"));
+
+export_graph(extractionScriptDiagram,
+             file_name=file.path(basePath,
+                     "extraction script tree.svg"));
 
 returnPathToRoot <- function(node, considerRoot = rootName) {
   res <- paste0(rev(unlist(sapply(Traverse(node, traversal='ancestor'),
@@ -336,6 +336,7 @@ FindNode(extractionScriptTree, name=rootName)$Do(function(node) {
     lvlnchar <- nchar(lvlSpaces);
 
     node$extractionscript <- paste0(lvlSpaces,
+                                    "res",
                                     returnPathToRoot(node$parent),
                                     "$AddChild('", node$name, "');");
     if (isCollapsing(GetAttribute(node, collapsingColName))) {
