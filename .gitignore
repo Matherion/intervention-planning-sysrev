@@ -6,5 +6,6 @@
 *.html
 *.svg
 *.csv
+wim-googlesheet.csv
 
 extraction script template foundation.R
