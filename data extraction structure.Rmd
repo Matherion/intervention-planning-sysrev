@@ -183,7 +183,8 @@ returnPathToRoot <- function(node, considerRoot = rootName) {
   res <- paste0(rev(unlist(sapply(Traverse(node, traversal='ancestor'),
                                   function(x) return(x$name)),
                            recursive=TRUE)), collapse="$");
-  res <- gsub(paste0(".*", considerRoot), "", res);
+  res <- gsub(paste0("^.*\\$", considerRoot, "$"), "", res);
+  res <- gsub(paste0("^.*\\$", considerRoot, "\\$"), "\\$", res);
   return(res);
 }
 
@@ -268,7 +269,7 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
                    lvlSpaces, "    ", defaultValue, "\n",
                    "\n");
     addScoring <- TRUE;
-  } else if (isRepeating(node$Get(repeatingColName)) && !isRecursive(node$Get(recursionColName))) {
+  } else if (isRepeating(node[[repeatingColName]]) && !isRecursive(node[[recursionColName]])) {
     ### This node is repeating but not recursive, so a simple list with named elements will do.
     rslt <- paste0(rslt, "\n",
                    lvlSpaces, "###\n",
@@ -277,8 +278,16 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
                           collapse="\n"), "\n",
                    lvlSpaces, "###\n",
                    "\n",
-                   lvlSpaces, "    list('", node[[ownerColName]], "1' = NA,\n",
-                   lvlSpaces, "         '", node[[ownerColName]], "2' = NA)\n",
+                   lvlSpaces, "    list('",
+                   ifelse(is.null(node[[ownerColName]]),
+                          node$name,
+                          node[[ownerColName]]),
+                   "1' = NA,\n",
+                   lvlSpaces, "         '",
+                   ifelse(is.null(node[[ownerColName]]),
+                          node$name,
+                          node[[ownerColName]]),
+                   "2' = NA)\n",
                    "\n");
     addScoring <- TRUE;
     if (hasOwner(node[[ownerColName]])) {
@@ -286,20 +295,54 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
                           lvlSpaces, "###\n",
                           lvlSpaces, "### Must have one list element for each '",
                           node[[ownerColName]],
-                          "' element!");
+                          "' element, and\n",
+                          lvlSpaces, "### the name of each list element must be ",
+                          "the same.");
     }
   } else if (isRecursive(node[[recursionColName]])) {
     ### This node is recursive, and so probably repeating.
+    
+    ### Determine the path to the root of this element
+    currentElementName <- ifelse(isRepeating(node[[repeatingColName]]),
+                                 paste0(node$name, "_.1._"),
+                                 node$name)
+    currentElementRoot <- paste0("res", returnPathToRoot(node$parent),
+                                 "$", currentElementName);
+    
     rslt <- paste0(rslt, "\n",
                    lvlSpaces, "###\n",
                    paste0(strwrap(node[[descriptionColName]],
                                   width=76-lvlnchar, prefix=paste0(lvlSpaces, "### ")),
                           collapse="\n"), "\n",
                    lvlSpaces, "###\n",
-                   lvlSpaces, "### This node is recursive! Scroll down to the section marked\n",
-                   lvlSpaces, "### 'RECURSIVE ELEMENTS' and select the lines corresponding to \n",
-                   lvlSpaces, "### recursive element '", node[[recursionColName]], "'.\n",
-                   lvlSpaces, "### Copy-paste those here.\n");
+                   lvlSpaces, "### [ Recursive element '", node[[recursionColName]], "']\n",
+                   lvlSpaces, "###\n");
+    
+    if (isRepeating(node[[repeatingColName]])) {
+      rslt <- paste0(rslt,
+                     lvlSpaces, "### This recursive element can occur multiple times");
+      if (hasOwner(node[[ownerColName]])) {
+        rslt <- paste0(rslt, ",\n",
+                       lvlSpaces, "### specifically, once for each '",
+                       node[[ownerColName]], "'.\n");
+      }
+      rslt <- paste0(rslt,
+                     lvlSpaces, "### You may want to copy the lines below, until the text\n",
+                     lvlSpaces, "### <<<END RECURSIVE ELEMENT ", toupper(node$name), ">>>\n",
+                     lvlSpaces, "### and paste them below this first occurrence in case it does\n",
+                     lvlSpaces, "### occur more than once.\n\n");
+    }
+
+    rslt <- paste0(rslt,
+                   lvlSpaces, "    res", returnPathToRoot(node$parent),
+                   "$AddChild('", currentElementName, "');\n\n",
+                   lvlSpaces, "###\n");
+    
+    if (isRepeating(node[[repeatingColName]])) {
+      rslt <- paste0(rslt,
+                     lvlSpaces, "### <<<END RECURSIVE ELEMENT ", toupper(node$name), ">>>");
+    }
+    
   }
   ### Add scoring, if necessary
   if (addScoring) {
@@ -361,6 +404,7 @@ FindNode(extractionScriptTree, name=rootName)$Do(function(node) {
         ### Start the statement to set the value
         node$extractionscript <- paste0(node$extractionscript, "\n",
                                         lvlSpaces,
+                                        "res",
                                         returnPathToRoot(node), "[['", valueName, "']] <-");
       }
     }
@@ -418,14 +462,29 @@ extractionScriptBody <- paste0(extractionScriptBody,
                                repStr("#", 80), "\n",
                                repStr("#", 80), "\n");
 
+recursionRootLevel <- FindNode(extractionScriptTree, name=recursionsName)$level;
+
 FindNode(extractionScriptTree, name=recursionsName)$Do(function(node) {
-  if (isRoot(node)) {
-    node$extractionscript <- paste0("res <- Node$new('", recursionsName, "');");
-  } else {
-    node$extractionscript <- paste0(returnPathToRoot(node$parent),
+  if (node$name == recursionsName) {
+    node$extractionscript <- "";
+  } else  {
+    if (node$level == recursionRootLevel + 1) {
+      node$extractionscript <- paste0(node$extractionscript,
+                                      "\n",
+                                      "#", repStr(">", 78), "#\n",
+                                      "#", repStr(">", 78), "#\n",
+                                      "#>> ", node$name,
+                                      repStr(73-nchar(node$name)), ">>#\n",
+                                      "#", repStr(">", 78), "#\n",
+                                      "#", repStr(">", 78), "#\n\n");
+    }
+    node$extractionscript <- paste0(node$extractionscript,
+                                    "recEl",
+                                    returnPathToRoot(node$parent,
+                                                     considerRoot=recursionsName),
                                     "$AddChild('", node$name, "');");
   }
-  });
+});
 
 extractionScriptBody <- paste0(extractionScriptBody,
                                paste0(unlist(FindNode(extractionScriptTree,
