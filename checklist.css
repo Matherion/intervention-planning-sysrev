@@ -1,0 +1,67 @@
+html {
+  font-family: sans-serif;
+  color: #172F47;
+}
+
+h1, h2, h3, h4, h5, h6, h7, h8, h9 {
+  color: #172F47;
+  padding-left: 15px;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.metabefor-checkbox-container {
+  margin: 10px;
+  padding: 5px;
+  border: solid 1px #2A5581;
+  border-radius: 10px;
+  background: white;
+}
+
+.metabefor-checkbox {
+  margin-left: 15px;
+  font-size: 20px;
+}
+
+input[type="checkbox"].metabefor-checkbox-actualcheckbox, .checkbox input[type="checkbox"].metabefor-checkbox-actualcheckbox {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  margin-left: -30px;
+}
+
+.metabefor-nesting {
+  margin: 10px;
+  padding: 5px;
+  border: solid 1px #172F47;
+  background: rgba(23, 47, 71, 0.05);
+}
+
+.checkbox label, .metabefor-checkbox-label {
+  padding-left: 30px;
+  color: #2A5581;
+}
+
+.metabefor-checkbox-description, .metabefor-book-reference {
+  padding-left: 15px;
+  color: black;
+}
+
+a.metabefor-term-definition, a.metabefor-term-definition:active {
+  color: inherit;
+  text-decoration:none;
+  border-bottom: 1px dotted black;
+}
+
+a.metabefor-term-definition:hover {
+  color: blue;
+  text-decoration:none;
+  border-bottom: 1px dotted blue;
+  cursor: default;
+}
+
+.metabefor-book-reference {
+  text-align: right;
+  font-style: oblique;
+  color: #2A5581;
+}
