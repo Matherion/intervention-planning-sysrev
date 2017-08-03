@@ -65,3 +65,55 @@ a.metabefor-term-definition:hover {
   font-style: oblique;
   color: #2A5581;
 }
+
+.metabefor-definitions-container{
+  position: fixed;
+  top: 5px;
+  right: 5px;
+  width: 600px;
+  max-width: 600px;
+  max-height: 90%;
+  background: white;
+  border: 2px black solid;
+  z-index: 999;
+  overflow-y: auto;
+}
+
+#metabefor-definitions-toggle{
+  display: block;
+  text-decoration: none;
+  text-align: middle;
+  font-size: 16px;
+  cursor: pointer;
+  background: black;
+  color: white;
+  padding: 5px;
+}
+
+#metabefor-definitions-overflowbox{
+  height: 90%;
+  max-height: 90%;
+/*  overflow-y: auto; */
+}
+
+#metabefor-definitions{
+  display: none;
+  background: white;
+  padding: 5px;
+}
+
+.metabefor-definitions-term-column {
+  width: 200px;
+  max-width: 200px;
+  vertical-align: top;
+}
+
+.metabefor-definitions-definition-column{
+  width: 400px;
+  max-width: 400px;
+  vertical-align: top;
+}
+
+tr:nth-child(even) {
+    background-color: #CCCCCC;
+}

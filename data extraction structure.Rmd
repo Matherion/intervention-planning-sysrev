@@ -5,7 +5,7 @@ date: "`r format(Sys.time(), '%Y-%m-%d om %X');`"
 output: html_document
 ---
 
-```{r message=FALSE, warning=FALSE, echo=FALSE}
+```{r setup, message=FALSE, warning=FALSE, echo=FALSE}
 
 ########################################################################
 ### Paths
@@ -42,6 +42,7 @@ safeRequire('DiagrammeR')
 safeRequire('DiagrammeRsvg')
 safeRequire('xtable')
 safeRequire('rsvg')
+safeRequire('dplyr');
 
 ########################################################################
 ### Settings (will become parameters/arguments)
@@ -59,142 +60,30 @@ parentColName <- "Parent";
 identifierColName <- "Identifier";
 activityColName <- "Activity";
 descriptionColName <- "Description";
+definitionsTermsCol = 'Term';
+definitionsDefCol = 'Definition';
 valueName <- "value";
 defaultValue <- "NA";
 recursiveElementPlaceholderName <- "recursiveElementPlaceholder";
 extractionSheet <- 'Extraction';
 definitionsSheet <- 'Definitions';
+
 sheetsURL <- paste0("https://docs.google.com/spreadsheets/d/",
                                  "1g__lA6Qd8x9UcUMIZGq_xMcZt584sJ-1sMaLmxm3nUU");
 localextractionSheetFile <- file.path(basePath, 'wim-extractionSheet.csv');
 localdefinitionsSheetFile <- file.path(basePath, 'wim-definitionsSheet.csv');
 
-########################################################################
-### Load spreadsheet
-########################################################################
+```
 
-### Get authorization to read Google sheet
-#gs_auth(new_user=TRUE);
-
-### Read google sheet
-
-tryCatch({
-  ### Extraction sheet first
-  cat0("\nReading extraction sheet from Google Docs.\n");
-  dat <- gs_read(gs_url(sheetsURL), ws = extractionSheet);
-  cat0("\nStoring extraction sheet in local file.\n");
-  write.csv(dat, row.names=FALSE, localextractionSheetFile);
-  ### Then definitions sheet
-  cat0("\nReading extraction sheet from Google Docs.\n");
-  definitions <- gs_read(gs_url(sheetsURL), ws = definitionsSheet);
-  cat0("\nStoring extraction sheet in local file.\n");
-  write.csv(definitions, row.names=FALSE, localdefinitionsSheetFile);
-}, error = function(e) {
-  cat0("\nReading extraction sheet from local file.\n");
-  dat <<- read.csv(localextractionSheetFile,
-                   stringsAsFactors = FALSE);
-  cat0("\nReading definitions sheet from local file.\n");
-  definitions <<- read.csv(localdefinitionsSheetFile,
-                           stringsAsFactors = FALSE);
-});
+```{r functions}
 
 ########################################################################
-### Process data
+### Functions (to move to metabefor)
 ########################################################################
-
-dataFrameNetwork <- as.data.frame(dat[!is.na(dat$Identifier),
-                                      unique(c('Identifier', 'Parent', names(dat)))]);
-dataFrameNetwork$Parent[is.na(dataFrameNetwork$Parent)] <- newRootName;
-
-### Check for non-existent parents
-nonExistentParents <- !(dataFrameNetwork$Parent %in% c(newRootName, dataFrameNetwork$Identifier));
-if (any(nonExistentParents)) {
-  message("Note: the items with the following identifiers have a parent that ",
-          "cannot be found in the list of parents: ",
-          paste0(paste0("'",
-                        dataFrameNetwork$Identifier[nonExistentParents],
-                        "' with parent '",
-                        dataFrameNetwork$Parent[nonExistentParents],
-                        "' on line ", 1+which(dat$Identifier %in% dataFrameNetwork$Identifier[nonExistentParents])),
-                 collapse=", "),
-          "), so I'm ignoring these.");
-}
-
-extractionScriptTree <- FromDataFrameNetwork(dataFrameNetwork);
-
-### Check for unique names
-if (!AreNamesUnique(extractionScriptTree)) {
-  stop("Not all identifiers are unique!");
-}
-
-### https://github.com/gluc/data.tree/issues/88
-#SetGraphStyle(extractionScriptTree, rankdir = "LR");
-#plot(extractionScriptTree);
-
-### Set generic styles
-extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "black",
-                                                    color='black', shape="box",
-                                                    style="rounded"));
 
 wrap <- function(string, width=40) {
   return(paste0(strwrap(string, width=width), collapse="\n"));
 }
-
-##################################################################################
-### Set specific styles
-
-### Set parent-only nodes to grey
-extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "grey",
-                                                    label = node$Activity,
-                                                    color='grey'),
-                        filterFun = function(node) return(ifelse(is.null(node$Description), TRUE, FALSE)));
-
-### Set regular nodes
-extractionScriptTree$Do(function(node) SetNodeStyle(node, color='black', fontcolor='black',
-                                                    shape="box", style="rounded",
-                                                    label = paste0(wrap(node$Activity,
-                                                                        width=60), "\n\n",
-                                                                   wrap(node$Description,
-                                                                           width=60))),
-                        filterFun = function(node) return(ifelse(is.null(node$Description), FALSE, TRUE)));
-
-extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "green", color='green',
-                                                    shape="box", style="rounded",
-                                                    label = paste0(wrap(node$Activity,
-                                                                        width=60), "\n\n",
-                                                                   wrap(node$Description,
-                                                                        width=60))),
-                        filterFun = function(node) return(ifelse(is.null(node$Repeating), FALSE, node$Repeating)));
-
-extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "orange", color='orange',
-                                                    shape="box", style="rounded",
-                                                    label = paste0(wrap(node$Activity,
-                                                                        width=60), "\n\n",
-                                                                   wrap(node$Description,
-                                                                        width=60))),
-                        filterFun = function(node) return(ifelse(is.null(node$Recursion), FALSE, TRUE)));
-
-extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "orange", color='orange',
-                                                    shape="box", style="rounded, dotted",
-                                                    label = paste0(wrap(node$Activity,
-                                                                        width=60), "\n\n",
-                                                                   wrap(node$Description,
-                                                                        width=60))),
-                        filterFun = function(node) return(ifelse(is.null(node$Recursion), FALSE,
-                                                                 ifelse((node$Recursion!='TRUE'), TRUE, FALSE))));
-
-extractionScriptDiagram <- ToDiagrammeRGraph(extractionScriptTree, direction = "descend");
-
-extractionScriptDiagram <- set_global_graph_attrs(extractionScriptDiagram, "layout", "dot", "graph");
-extractionScriptDiagram <- add_global_graph_attrs(extractionScriptDiagram, "rankdir", "LR", "graph");
-
-### Temporary to speed up the rest
-
-# render_graph(extractionScriptDiagram);
-
-export_graph(extractionScriptDiagram,
-             file_name=file.path(basePath,
-                     "extraction script tree.svg"));
 
 returnPathToRoot <- function(node, considerRoot = newRootName){#rootName) {
   res <- paste0(rev(unlist(sapply(Traverse(node, traversal='ancestor'),
@@ -335,8 +224,8 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
     currentElementName <- ifelse(isRepeating(node[[repeatingColName]]),
                                  paste0(node$name, "_.1._"),
                                  node$name)
-    currentElementPath <- paste0(returnPathToRoot(node$parent),
-                                 "$", currentElementName);
+    currentParentPath <- returnPathToRoot(node$parent);
+    currentElementPath <- paste0(currentParentPath, "$", currentElementName);
     
     rslt <- paste0(rslt, "\n",
                    lvlSpaces, commentPrefix, "\n",
@@ -361,7 +250,7 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
                        node[[ownerColName]], "'.\n");
       }
       rslt <- paste0(rslt,
-                     "\n",
+                     lvlSpaces, commentPrefix, "\n",
                      lvlSpaces, commentPrefix, " You may want to copy the lines below, until the text\n",
                      lvlSpaces, commentPrefix, " <<<END RECURSIVE ELEMENT ", toupper(node$name), ">>>\n",
                      lvlSpaces, commentPrefix, " and paste them below this first occurrence in case it does\n",
@@ -369,14 +258,25 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
     }
 
     rslt <- paste0(rslt,
-                   "\n",
-                   lvlSpaces, "    recursiveElementPlaceholder <- ", currentElementPath,
-                   "$AddChild('", currentElementName, "');\n\n",
-                   lvlSpaces, commentPrefix, "\n");
+                   lvlSpaces, commentPrefix, "\n",
+                   lvlSpaces, "    recursiveElementPlaceholder <- ", currentParentPath,
+                   "$AddChild('", currentElementName, "');\n",
+                   "\n");
+
+    ### Get recursive element extractionscript
+    recursiveElementExtractionScript <-
+      paste0(unlist(FindNode(extractionScriptTree, name=node[[recursionColName]])$Get("extractionscript")), collapse="\n");
     
+    ### Add required number of indents
+    recursiveElementExtractionScript <- gsub("\n", paste0("\n", lvlSpaces),
+                                             paste0(lvlSpaces, recursiveElementExtractionScript));
+    
+    rslt <- paste0(rslt,
+                   recursiveElementExtractionScript);
+
     if (isRepeating(node[[repeatingColName]])) {
       rslt <- paste0(rslt,
-                     lvlSpaces, commentPrefix, " <<<END RECURSIVE ELEMENT ", toupper(node$name), ">>>\n");
+                     lvlSpaces, commentPrefix, " <<<END RECURSIVE ELEMENT ", toupper(node$name), ">>>");
     }
 
   }
@@ -399,10 +299,302 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
   return(rslt);
 }
 
+### http://stackoverflow.com/questions/3665115/create-a-file-in-memory-for-user-to-download-not-through-server
 
+generateChecklistElements <- function(node) {
+
+  lvl <- node$level;
+  id <- node$name;
+  if (isRecursive(node[[recursionColName]]) && !isTrue(node[[recursionColName]])) {
+      if (node$trulyRecursive) {
+        return("<div>Another truly recursive element</div>");
+      }
+      ### Insert the recursive element here
+    return(paste0('<div class="metabefor-nesting metabefor-nesting-level', lvl, '">\n',
+                  '<h', lvl, '>', node$ChecklistTitle, '</h', lvl, '>\n',
+                  "<p class='metabefor-checkbox-description'>", node$ChecklistDescription, "</p>",
+                  paste0(sapply(FindNode(extractionScriptTree, name=node[[recursionColName]])$children,
+                           generateChecklistElements), collapse="\n"),
+                  '</div>'));
+  } else if (isLeaf(node)) {
+    return(paste0("<div class='metabefor-checkbox-container'>",
+                  
+                  "<br><br>", node$name, "<br><br>",
+                  
+                  "<div class='checkbox metabefor-checkbox'>\n",
+                  "<label class=\"metabefor-checkbox-label\"><input type='checkbox' class='metabefor-checkbox-actualcheckbox' name='", id, "' />\n",
+                  node$ChecklistTitle, "</label>\n</div>\n",
+                  "<p class='metabefor-checkbox-description'>", node$ChecklistDescription, "</p>",
+                  "<p class='metabefor-book-reference'>",
+                  "More information in the Intervention Mapping book at page ",
+                  node$BookReference, " and further.</p>\n",
+                  "</div>"));
+  } else {
+    return(paste0('<div class="metabefor-nesting metabefor-nesting-level', lvl, '">\n',
+                  '<h', lvl, '>', node$ChecklistTitle, '</h', lvl, '>\n',
+                  paste0(sapply(node$children, generateChecklistElements), collapse="\n"),
+                  '</div>'));
+  }
+}
+
+renderChecklist <- function(extractionScriptTree,
+                            checklistRoot = NULL,
+                            outputFile = NULL,
+                            css = "html {\n  font-family: sans-serif;\n}",
+                            header = paste0('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">\n',
+                                            '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>\n',
+                                            '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>\n'),
+                            footer = "<script>\n$(document).ready(function(){\n  $('[data-toggle=\"tooltip\"]').tooltip();\n});\n</script>",
+                            cssURL = NULL,
+                            definitions = NULL,
+                            definitionsTermsCol = 'Term',
+                            definitionsDefCol = 'Definition') {
+
+  checklistHeader <- "<html>\n\n<head>";
+  checklistScript <- "";
+
+  ### Add header info
+  if (!is.null(header)) {
+    if (file.exists(header)) {
+      checklistHeader <- paste0(checklistHeader, '\n',
+                                paste0(readLines(header), collapse="\n"),
+                                '\n');
+    } else {
+      checklistHeader <- paste0(checklistHeader, header, '\n');
+    }
+  }
+  
+  ### Add stylesheet info
+  if (!is.null(cssURL)) {
+    checklistHeader <- paste0(checklistHeader, '<link rel="stylesheet" type="text/css" href="', cssURL, '">\n');
+  } else if (file.exists(css)) {
+    checklistHeader <- paste0(checklistHeader, '<style>\n',
+                            paste0(readLines(css), collapse="\n"),
+                            '</style>\n');
+  } else {
+    checklistHeader <- paste0(checklistHeader, "<style>\n", css, "\n</style>\n");
+  }
+    
+  checklistHeader <- paste0(checklistHeader, "</head>\n\n<body>\n");
+
+  if (is.null(checklistRoot)) {
+    checklistRoot <- extractionScriptTree$root$name;
+  }
+
+  checklistBody <- paste0(sapply(FindNode(extractionScriptTree, checklistRoot)$children,
+                                 generateChecklistElements),
+                          collapse="\n");
+
+  for (i in 1:nrow(definitions)) {
+    matchString <- paste0("(", definitions[i, definitionsTermsCol], ")");
+    definitionToolTip <- paste0('<a class="metabefor-term-definition" data-toggle="tooltip" title="',
+                                definitions[i, definitionsDefCol],
+                                '">\\1</a>');
+    checklistBody <- gsub(matchString, definitionToolTip,
+                          checklistBody, ignore.case = TRUE);
+  }
+
+  ### Add footer info
+  if (!is.null(footer)) {
+    if (file.exists(footer)) {
+      checklistFooter <- paste0(readLines(footer), collapse="\n");
+    } else {
+      checklistFooter <- footer;
+    }
+  }
+  
+  definitionTermsOrder <- order(pull(definitions, definitionsTermsCol));
+  
+  checklistDefinitions <- paste0("<div class='metabefor-definitions-container'>\n",
+                                 "<div id='metabefor-definitions-toggle'>\n",
+                                 "Glossary (click here to toggle definitions)</div>\n",
+                                 "<div id='metabefor-definitions-overflowbox'>",
+                                 "<table id='metabefor-definitions'>\n",
+                                 paste0(paste0("<tr>\n",
+                                               "<td class='metabefor-definitions-term-column'>",
+                                               pull(definitions, definitionsTermsCol)[definitionTermsOrder],
+                                               "</td>\n",
+                                               "<td class='metabefor-definitions-definition-column'>",
+                                               pull(definitions, definitionsDefCol)[definitionTermsOrder],
+                                               "</td>\n",
+                                               "</tr>\n"),
+                                        collapse="\n"),
+                                 "</table>\n</div>\n",
+                                 "</div>\n");
+  
+  checklistScript <- paste0(checklistScript,
+                            '$( "#metabefor-definitions-toggle" ).click(function() {',
+                            '  $( "#metabefor-definitions" ).toggle();',
+                            '});');
+  
+  checklistBody <- paste0(checklistHeader,
+                          checklistDefinitions,
+                          "\n<div class=\"form-group\">\n",
+                          checklistBody, "\n",
+                          "</div>\n",
+                          checklistFooter, "\n",
+                          "\n</body>\n<script>\n",
+                          checklistScript,
+                          "\n</script>\n</html>\n");
+  
+  ### Replace UTF-8 non-breaking spaces with regular spaces
+  ### https://stackoverflow.com/questions/14720493/replace-a-utf-8-character-in-r
+  checklistBody <- gsub('\U00A0', ' ', checklistBody);
+
+  if (!is.null(outputFile)) {
+    outputFileCon <- file(outputFile,
+                          "w",
+                          encoding="UTF-8");
+    writeLines(paste0(checklistBody, collapse=""),
+               con=outputFileCon);
+    close(outputFileCon);
+  }
+  
+  invisible(checklistBody);
+
+}
+
+```
+
+```{r load-data}
+
+########################################################################
+### Load spreadsheet
+########################################################################
+
+### Get authorization to read Google sheet
+#gs_auth(new_user=TRUE);
+
+### Read google sheet
+
+tryCatch({
+  ### Extraction sheet first
+  cat0("\nReading extraction sheet from Google Docs.\n");
+  dat <- gs_read(gs_url(sheetsURL), ws = extractionSheet);
+  cat0("\nStoring extraction sheet in local file.\n");
+  write.csv(dat, row.names=FALSE, localextractionSheetFile);
+  ### Then definitions sheet
+  cat0("\nReading extraction sheet from Google Docs.\n");
+  definitions <- gs_read(gs_url(sheetsURL), ws = definitionsSheet);
+  cat0("\nStoring extraction sheet in local file.\n");
+  write.csv(definitions, row.names=FALSE, localdefinitionsSheetFile);
+}, error = function(e) {
+  cat0("\nReading extraction sheet from local file.\n");
+  dat <<- read.csv(localextractionSheetFile,
+                   stringsAsFactors = FALSE);
+  cat0("\nReading definitions sheet from local file.\n");
+  definitions <<- read.csv(localdefinitionsSheetFile,
+                           stringsAsFactors = FALSE);
+});
+
+########################################################################
+### Process data
+########################################################################
+
+dataFrameNetwork <- as.data.frame(dat[!is.na(dat$Identifier),
+                                      unique(c('Identifier', 'Parent', names(dat)))]);
+dataFrameNetwork$Parent[is.na(dataFrameNetwork$Parent)] <- newRootName;
+
+### Check for non-existent parents
+nonExistentParents <- !(dataFrameNetwork$Parent %in% c(newRootName, dataFrameNetwork$Identifier));
+if (any(nonExistentParents)) {
+  message("Note: the items with the following identifiers have a parent that ",
+          "cannot be found in the list of parents: ",
+          paste0(paste0("'",
+                        dataFrameNetwork$Identifier[nonExistentParents],
+                        "' with parent '",
+                        dataFrameNetwork$Parent[nonExistentParents],
+                        "' on line ", 1+which(dat$Identifier %in% dataFrameNetwork$Identifier[nonExistentParents])),
+                 collapse=", "),
+          "), so I'm ignoring these.");
+}
+
+extractionScriptTree <- FromDataFrameNetwork(dataFrameNetwork);
+
+### Check for unique names
+if (!AreNamesUnique(extractionScriptTree)) {
+  stop("Not all identifiers are unique!");
+}
+
+```
+
+```{r build-graph}
+
+### https://github.com/gluc/data.tree/issues/88
+#SetGraphStyle(extractionScriptTree, rankdir = "LR");
+#plot(extractionScriptTree);
+
+### Set generic styles
+extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "black",
+                                                    color='black', shape="box",
+                                                    style="rounded"));
+
+
+##################################################################################
+### Set specific styles
+
+### Set parent-only nodes to grey
+extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "grey",
+                                                    label = node$Activity,
+                                                    color='grey'),
+                        filterFun = function(node) return(ifelse(is.null(node$Description), TRUE, FALSE)));
+
+### Set regular nodes
+extractionScriptTree$Do(function(node) SetNodeStyle(node, color='black', fontcolor='black',
+                                                    shape="box", style="rounded",
+                                                    label = paste0(wrap(node$Activity,
+                                                                        width=60), "\n\n",
+                                                                   wrap(node$Description,
+                                                                           width=60))),
+                        filterFun = function(node) return(ifelse(is.null(node$Description), FALSE, TRUE)));
+
+extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "green", color='green',
+                                                    shape="box", style="rounded",
+                                                    label = paste0(wrap(node$Activity,
+                                                                        width=60), "\n\n",
+                                                                   wrap(node$Description,
+                                                                        width=60))),
+                        filterFun = function(node) return(ifelse(is.null(node$Repeating), FALSE, node$Repeating)));
+
+extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "orange", color='orange',
+                                                    shape="box", style="rounded",
+                                                    label = paste0(wrap(node$Activity,
+                                                                        width=60), "\n\n",
+                                                                   wrap(node$Description,
+                                                                        width=60))),
+                        filterFun = function(node) return(ifelse(is.null(node$Recursion), FALSE, TRUE)));
+
+extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "orange", color='orange',
+                                                    shape="box", style="rounded, dotted",
+                                                    label = paste0(wrap(node$Activity,
+                                                                        width=60), "\n\n",
+                                                                   wrap(node$Description,
+                                                                        width=60))),
+                        filterFun = function(node) return(ifelse(is.null(node$Recursion), FALSE,
+                                                                 ifelse((node$Recursion!='TRUE'), TRUE, FALSE))));
+
+extractionScriptDiagram <- ToDiagrammeRGraph(extractionScriptTree, direction = "descend");
+
+extractionScriptDiagram <- set_global_graph_attrs(extractionScriptDiagram, "layout", "dot", "graph");
+extractionScriptDiagram <- add_global_graph_attrs(extractionScriptDiagram, "rankdir", "LR", "graph");
+
+### Temporary to speed up the rest
+
+# render_graph(extractionScriptDiagram);
+
+export_graph(extractionScriptDiagram,
+             file_name=file.path(basePath,
+                     "extraction script tree.svg"));
+
+# export_graph(grViz(ToGraphViz(extractionScriptTree)),
+#              file_name=file.path(basePath,
+#                      "extraction script tree.png"));
+
+```
+
+```{r build-extraction-script}
 ###################################################################################
-### Add extractionscript bits to the tree, first for the
-### recursive extractionscript fragments
+### Add extractionscript bits to the tree for recursive extractionscript fragments
 ###################################################################################
 
 ### Set whether an element contains recursive elements, and how many
@@ -415,9 +607,11 @@ extractionScriptTree$Do(function(node) {
 
 ### Check all nodes with recursive children to check whether
 ### any of are truly recursive
-extractionScriptTree$Do(function(node) {print(node$name)},
-                        filterFun = function(x, nodeName = node$name)
-                          return(x$nrOfRecursiveChildren>0));
+###
+### (only prints; commented out)
+# extractionScriptTree$Do(function(node) {print(node$name)},
+#                         filterFun = function(x, nodeName = node$name)
+#                           return(x$nrOfRecursiveChildren>0));
 
 ### Store whether a node is truly recursive (i.e. whether it
 ### contains a recursive element that's its parent)
@@ -529,8 +723,7 @@ FindNode(extractionScriptTree, name=recursionsName)$Do(function(node) {
 });
 
 ###################################################################################
-### Add extractionscript bits to the tree, second for the
-### regular extractionscript
+### Add extractionscript bits to the tree for the regular extractionscript
 ###################################################################################
 
 rootLevel <- FindNode(extractionScriptTree, name=rootName)$level;
@@ -642,113 +835,15 @@ writeLines(paste0(extractionScript, collapse=""),
            file.path(basePath,
                      "extraction script template foundation.R"));
 
+```
+
+```{r build-checklist}
+
 ###############################################################################
 ###############################################################################
 ### Generate checklist                                                      ###
 ###############################################################################
 ###############################################################################
-
-### http://stackoverflow.com/questions/3665115/create-a-file-in-memory-for-user-to-download-not-through-server
-
-generateChecklistElements <- function(node) {
-  lvl <- node$level;
-  id <- node$name;
-  if (isLeaf(node)) {
-    return(paste0("<div class='metabefor-checkbox-container'>",
-                  "<div class='checkbox metabefor-checkbox'>\n",
-                  "<label class=\"metabefor-checkbox-label\"><input type='checkbox' class='metabefor-checkbox-actualcheckbox' name='", id, "' />\n",
-                  node$ChecklistTitle, "</label>\n</div>\n",
-                  "<p class='metabefor-checkbox-description'>", node$ChecklistDescription, "</p>",
-                  "<p class='metabefor-book-reference'>",
-                  "More information in the Intervention Mapping book at page ",
-                  node$BookReference, " and further.</p>\n",
-                  "</div>"));
-  } else {
-    return(paste0('<div class="metabefor-nesting metabefor-nesting-level', lvl, '">\n',
-                  '<h', lvl, '>', node$ChecklistTitle, '</h', lvl, '>\n',
-                  paste0(sapply(node$children, generateChecklistElements), collapse="\n"),
-                  '</div>'));
-  }
-}
-
-renderChecklist <- function(extractionScriptTree,
-                            checklistRoot = NULL,
-                            outputFile = NULL,
-                            css = "html {\n  font-family: sans-serif;\n}",
-                            header = paste0('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">\n',
-                                            '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>\n',
-                                            '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>\n'),
-                            footer = "<script>\n$(document).ready(function(){\n  $('[data-toggle=\"tooltip\"]').tooltip();\n});\n</script>",
-                            cssURL = NULL,
-                            definitions = NULL,
-                            definitionsTermsCol = 'Term',
-                            definitionsDefCol = 'Definition') {
-
-  checklistHeader <- "<html>\n\n<head>";
-
-  ### Add header info
-  if (!is.null(header)) {
-    if (file.exists(header)) {
-      checklistHeader <- paste0(checklistHeader, '\n',
-                                paste0(readLines(header), collapse="\n"),
-                                '\n');
-    } else {
-      checklistHeader <- paste0(checklistHeader, header, '\n');
-    }
-  }
-  
-  ### Add stylesheet info
-  if (!is.null(cssURL)) {
-    checklistHeader <- paste0(checklistHeader, '<link rel="stylesheet" type="text/css" href="', cssURL, '">\n');
-  } else if (file.exists(css)) {
-    checklistHeader <- paste0(checklistHeader, '<style>\n',
-                            paste0(readLines(css), collapse="\n"),
-                            '</style>\n');
-  } else {
-    checklistHeader <- paste0(checklistHeader, "<style>\n", css, "\n</style>\n");
-  }
-    
-  checklistHeader <- paste0(checklistHeader, "</head>\n\n<body>\n");
-
-  if (is.null(checklistRoot)) {
-    checklistRoot <- extractionScriptTree$root$name;
-  }
-
-  checklistBody <- paste0(sapply(FindNode(extractionScriptTree, checklistRoot)$children,
-                                 generateChecklistElements),
-                          collapse="\n");
-
-  for (i in 1:nrow(definitions)) {
-    matchString <- paste0("(", definitions[i, definitionsTermsCol], ")");
-    definitionToolTip <- paste0('<a class="metabefor-term-definition" href="#" data-toggle="tooltip" title="',
-                                definitions[i, definitionsDefCol],
-                                '">\\1</a>');
-    checklistBody <- gsub(matchString, definitionToolTip,
-                          checklistBody, ignore.case = TRUE);
-  }
-
-  ### Add footer info
-  if (!is.null(footer)) {
-    if (file.exists(footer)) {
-      checklistFooter <- paste0(readLines(footer), collapse="\n");
-    } else {
-      checklistFooter <- footer;
-    }
-  }
-   
-  checklistBody <- paste0(checklistHeader, "\n<div class=\"form-group\">\n",
-                          checklistBody, "\n",
-                          "</div>\n",
-                          checklistFooter, "\n",
-                          "\n</body></html>\n");
-  
-  if (!is.null(outputFile)) {
-    writeLines(paste0(checklistBody, collapse=""), outputFile);
-  }
-  
-  invisible(checklistBody);
-
-}
 
 renderChecklist(extractionScriptTree,
                 checklistRoot = 'intervention',
@@ -757,14 +852,5 @@ renderChecklist(extractionScriptTree,
                 definitions = definitions);
 
 ###############################################################################
-
-
-# export_graph(grViz(ToGraphViz(extractionScriptTree)),
-#              file_name=file.path(basePath,
-#                      "extraction script tree.png"));
-
-# returnPathToRoot <- function(node) {
-#   if (node$isRoot) return(node$name) else return(list(node$name, returnPathToRoot(node$parent)));
-# }
 
 ```
