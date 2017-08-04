@@ -424,15 +424,20 @@ renderChecklist <- function(extractionScriptTree,
   
   checklistScript <- paste0(checklistScript,
                             '$( "#metabefor-definitions-toggle" ).click(function() {',
-                            '  $( "#metabefor-definitions" ).toggle();',
+                            '  $( "#metabefor-definitions-overflowbox" ).toggle();',
                             '});');
   
+  ### (The metabefor-header and the checklist definitions are placed after the main
+  ###  content, so that it's rendered on top of that content.)
   checklistBody <- paste0(checklistHeader,
-                          checklistDefinitions,
+                          "\n<div class='metabefor-content-container'>\n",
                           "\n<div class=\"form-group\">\n",
                           checklistBody, "\n",
-                          "</div>\n",
+                          "</div>\n</div>\n",
                           checklistFooter, "\n",
+                          "\n<div class='metabefor-header'>",
+                          checklistDefinitions,
+                          "</div>\n",
                           "\n</body>\n<script>\n",
                           checklistScript,
                           "\n</script>\n</html>\n");

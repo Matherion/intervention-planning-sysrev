@@ -1,6 +1,15 @@
 html {
   font-family: sans-serif;
   color: #172F47;
+  overflow: hidden;
+  height: 100%;
+  max-height: 100%;
+}
+
+body {
+  overflow: hidden;
+  height: 100%;
+  max-height: 100%;
 }
 
 h1, h2, h3, h4, h5, h6, h7, h8, h9 {
@@ -8,6 +17,13 @@ h1, h2, h3, h4, h5, h6, h7, h8, h9 {
   padding-left: 15px;
   font-size: 25px;
   font-weight: bold;
+}
+
+.metabefor-content-container {
+  margin-top: 20px;
+  overflow-y: scroll;
+  height: calc(100% - 22px);
+  max-height: calc(100% - 22px);
 }
 
 .metabefor-checkbox-container {
@@ -66,54 +82,68 @@ a.metabefor-term-definition:hover {
   color: #2A5581;
 }
 
+.metabefor-header {
+  height: 22px;
+  min-height: 22px;
+  max-height: 22px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: black;
+}
+
 .metabefor-definitions-container{
   position: fixed;
-  top: 5px;
-  right: 5px;
+  right: 20px;
+  top: 0;
   width: 600px;
   max-width: 600px;
+  height: 90%;
   max-height: 90%;
-  background: white;
-  border: 2px black solid;
-  z-index: 999;
-  overflow-y: auto;
 }
 
 #metabefor-definitions-toggle{
   display: block;
   text-decoration: none;
-  text-align: middle;
+  text-align: center;
   font-size: 16px;
+  height: 16px;
+  max-height: 16px;
+  min-height: 16px;
   cursor: pointer;
   background: black;
   color: white;
-  padding: 5px;
+  margin: 2px;
 }
 
 #metabefor-definitions-overflowbox{
-  height: 90%;
-  max-height: 90%;
-/*  overflow-y: auto; */
+  display: none;
+  height: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  background: white;
+  border: 2px black solid;
 }
 
 #metabefor-definitions{
-  display: none;
   background: white;
-  padding: 5px;
 }
 
 .metabefor-definitions-term-column {
   width: 200px;
   max-width: 200px;
   vertical-align: top;
+  padding: 2px 5px;
 }
 
 .metabefor-definitions-definition-column{
   width: 400px;
   max-width: 400px;
   vertical-align: top;
+  padding: 2px 5px;
 }
 
 tr:nth-child(even) {
-    background-color: #CCCCCC;
+  background-color: #CCCCCC;
 }
