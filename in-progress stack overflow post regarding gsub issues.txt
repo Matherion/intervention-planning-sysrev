@@ -1,0 +1,77 @@
+In R, generating HTML, how can I correctly apply consecutive search/replaces to add popup definitions using <a title=""> tooltips?
+
+
+
+--
+
+
+
+**The goal / background**
+
+I'm generating an HTML page from a Google sheet, and want to insert fancy definitions using tooltips. So, we have a string with the generated HTML and a dataframe with the terms and their definitions, for example:
+
+    ### The string
+    checklistBody <- paste0("<html>\n  <body>\n",
+                            "    This is a text, with some complicated ",
+                            "terms that require definitions.\n",
+                            "  </body>\n</html>");
+    
+    ### The 'glossary'
+    definitions <- data.frame(term = c('term', 'definition'),
+                              definition = c('Something with a definition',
+                                             'The definition of the term.'));
+
+(The definitions are read from a Google Sheet, so I don't know them in advance.)
+
+Now, I want to add these definitions to the relevant terms as tooltips so that I end up with this:
+
+[![An example of the tooltip in action][1]][1]
+
+This means that the HTML is changed, so that the word `term` is prepended by `<a title="Something with a definition">` and appended by `</a>`, and the word `definition` is prepended by `<a title="The definition of the term.">` and appended by `</a>`. So, the new HTML should be changed from:
+
+    <html>
+      <body>
+        This is a text, with some complicated terms that require definitions.
+      </body>
+    </html>
+
+to:
+
+    <html>
+      <body>
+        This is a text, with some
+        complicated <a title="Something with a definition">term</a>s that
+        require <a title="The definition of the term.">definition</a>s.
+      </body>
+    </html>
+
+**The initial approach**
+
+So, what I started out doing is (I know I should probably use smth like `l_ply` but I'd prefer to first get it working :-)):
+
+    for (i in 1:nrow(definitions)) {
+      matchString <- paste0("(", definitions[i, 'term'], ")");
+      definitionToolTip <- paste0('<a title="',
+                                  definitions[i, 'definition'],
+                                  '">\\1</a>');
+      checklistBody <- gsub(matchString, definitionToolTip,
+                            checklistBody, ignore.case = TRUE);
+    }
+
+This seemed to work well (see https://effectivebehaviorchange.com/wim/intervention-planning-sysrev/checklist.html), until I realised that the `gsub` search/replace doesn't know when it's searching/replacing inside a `title` attribute of an `a` tag.
+
+**The solutions explored so far**
+
+*Regular Expressions*
+
+I first tried to build a lookbehind regular expression (because as everybody knows, parsing HTML using regexes is a brilliant idea):
+
+
+
+However, R's regular regular expression parser doesn't seem to support lookbehind, and the Perl implementation requires fixed-width lookbehind expressions, which I can't provide. I might be missing something here, but after having spent a few hours trying to get this to work, I gave up and tried XML.
+
+*The `XML` package*
+
+The XML package allows manipulation of 'the DOM', which would also solve this because it would enable limiting the search/replace to normal text (not looking within e.g. attributes).
+
+  [1]: https://i.stack.imgur.com/EsXtT.png
