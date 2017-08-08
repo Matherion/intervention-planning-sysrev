@@ -43,6 +43,7 @@ safeRequire('DiagrammeRsvg')
 safeRequire('xtable')
 safeRequire('rsvg')
 safeRequire('dplyr');
+safeRequire('XML')
 
 ########################################################################
 ### Settings (will become parameters/arguments)
@@ -386,12 +387,46 @@ renderChecklist <- function(extractionScriptTree,
                           collapse="\n");
 
   for (i in 1:nrow(definitions)) {
-    matchString <- paste0("(", definitions[i, definitionsTermsCol], ")");
+    #matchString <- paste0("(", definitions[i, definitionsTermsCol], ")");
+    #matchString <- paste0("<a[^>]*>[^<]*<\\/a|(", definitions[i, definitionsTermsCol], ")");
+    matchString <- paste0("<a[^>]*>[^<]*<\\/a(*SKIP)(*F)|(", definitions[i, definitionsTermsCol], ")");
     definitionToolTip <- paste0('<a class="metabefor-term-definition" data-toggle="tooltip" title="',
                                 definitions[i, definitionsDefCol],
                                 '">\\1</a>');
     checklistBody <- gsub(matchString, definitionToolTip,
-                          checklistBody, ignore.case = TRUE);
+                          checklistBody, ignore.case = TRUE, perl=TRUE);
+
+    
+    # checklistBodyXML <- htmlParse(checklistBody, useInternalNodes = TRUE);
+    # 
+    # checklistBodyNodes <- xpathApply(checklistBodyXML, "////*");
+    # invisible(sapply(checklistBodyNodes, function(n) {
+    #   print(xmlValue(n));
+    #   newNodeText <- gsub(matchString, definitionToolTip,
+    #                       xmlValue(n),
+    #                       ignore.case=TRUE);
+    #   xmlValue(n) <- newNodeText;
+    #   print(xmlValue(n));
+    # }));
+    # cat0("definition", i, "\n");
+    # browser();
+    # checklistBody <- toString(checklistBodyNodes);
+
+    # checklistBodyProcessed <- xpathApply(checklistBodyXML, "////*",
+    # checklistBodyProcessed <- xpathApply(checklistBodyXML, "////text()",
+    #                                      function(node) {
+    #                                        xmlValue(node) <-
+    #                                          gsub(matchString, definitionToolTip, xmlValue(node), ignore.case=TRUE);
+    #                                      });
+          
+    # checklistBodyProcessed <- xpathApply(checklistBodyXML, "//text()",
+    #                                      gsub, pattern=matchString,
+    #                                      replacement=definitionToolTip,
+    #                                      ignore.case=TRUE);
+    # checklistBody <- toString(checklistBodyProcessed);
+    #browser();
+    # checklistBody <- gsub(matchString, definitionToolTip,
+    #                       checklistBody, ignore.case = TRUE);
   }
 
   ### Add footer info
