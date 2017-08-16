@@ -151,6 +151,12 @@ hasOwner <- function(x) {
   }
 }
 
+###############################################################################
+###############################################################################
+### Extractionscript functions
+###############################################################################
+###############################################################################
+
 leafExtractionscript <- function(node, lvlSpaces="  ",
                                  fillerSymbol = "#",
                                  recursionNesting=0) {
@@ -159,30 +165,27 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
   extraInfo <- "";
   lvlnchar <- nchar(lvlSpaces);
   commentPrefix <- paste0("#", repStr(fillerSymbol, 2));
-  ### Start scriptbit
+  nxtLvlSpaces <- repStr(" ", nchar(lvlSpaces) + 2);
+  
+  ### Start building the extractionscript by adding the TITLE
   rslt <- paste0(lvlSpaces, "#", repStr(fillerSymbol, 79-lvlnchar), "\n",
                  lvlSpaces, commentPrefix, "\n",
                  paste0(strwrap(toupper(node[[activityColName]]),
-                                width=76-lvlnchar, prefix=paste0(lvlSpaces, commentPrefix, " ")),
+                                width=76-lvlnchar,
+                                prefix=paste0(lvlSpaces, commentPrefix, " ")),
                         collapse="\n"));
   
-  
-    
-# rslt <- paste0(rslt, "\n\n------ ", recursionNesting, "\n",
-#                Navigate(node, rep("..", recursionNesting))$name, "\n",
-#                returnPathToRoot(node$parent, considerRoot = Navigate(node, rep("..", recursionNesting))$name),
-#                "\n\n");
-
-
+  ### Add the description
+  rslt <- paste0(rslt, "\n",
+                 lvlSpaces, commentPrefix, "\n",
+                 paste0(strwrap(node[[descriptionColName]],
+                                width=76-lvlnchar, prefix=paste0(lvlSpaces, commentPrefix, " ")),
+                        collapse="\n"), "\n");
 
   if (!isRepeating(node[[repeatingColName]]) && !isRecursive(node[[recursionColName]])) {
     ### So this node is the simplest type; it doesn't repeat (only has one value), and
     ### it is not an instance of a recursive fragment.
-    rslt <- paste0(rslt, "\n",
-                   lvlSpaces, commentPrefix, "\n",
-                   paste0(strwrap(node[[descriptionColName]],
-                                  width=76-lvlnchar, prefix=paste0(lvlSpaces, commentPrefix, " ")),
-                          collapse="\n"), "\n",
+    rslt <- paste0(rslt,
                    "\n",
                    lvlSpaces, "    ", defaultValue, "\n",
                    "\n");
@@ -190,11 +193,7 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
   } else if (isRepeating(node[[repeatingColName]]) && !isRecursive(node[[recursionColName]])) {
     ### This node is repeating but not recursive, so a simple list with named elements will do.
     
-    rslt <- paste0(rslt, "\n",
-                   lvlSpaces, commentPrefix, "\n",
-                   paste0(strwrap(node[[descriptionColName]],
-                                  width=76-lvlnchar, prefix=paste0(lvlSpaces, commentPrefix, " ")),
-                          collapse="\n"), "\n",
+    rslt <- paste0(rslt,
                    lvlSpaces, commentPrefix, "\n",
                    "\n",
                    lvlSpaces, "    list('",
@@ -210,16 +209,20 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
                    "\n");
     addScoring <- TRUE;
     if (hasOwner(node[[ownerColName]])) {
+      ### If this has an owner, coders should make sure it
+      ### is coded for each instance of the owner.
       extraInfo <- paste0("\n",
                           lvlSpaces, commentPrefix, "\n",
-                          lvlSpaces, commentPrefix, " Must have one list element for each '",
+                          lvlSpaces, commentPrefix,
+                          " Must have one list element for each '",
                           node[[ownerColName]],
                           "' element, and\n",
-                          lvlSpaces, commentPrefix, " the name of each list element must be ",
+                          lvlSpaces, commentPrefix,
+                          " the identifier (e.g. number) of each list element must be ",
                           "the same.");
     }
   } else if (isRecursive(node[[recursionColName]])) {
-    ### This node is recursive, and so probably repeating.
+    ### This node is recursive.
     
     ### Determine the path to the root of this element
     currentElementName <- ifelse(isRepeating(node[[repeatingColName]]),
@@ -227,23 +230,11 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
                                  node$name)
     currentParentPath <- returnPathToRoot(node$parent);
     currentElementPath <- paste0(currentParentPath, "$", currentElementName);
-    
-    rslt <- paste0(rslt, "\n",
-                   lvlSpaces, commentPrefix, "\n",
-                   paste0(strwrap(node[[descriptionColName]],
-                                  width=76-lvlnchar, prefix=paste0(lvlSpaces, commentPrefix, " ")),
-                          collapse="\n"), "\n",
-                   lvlSpaces, commentPrefix, "\n",
-                   paste0(strwrap(paste0("In this file, locate and copy-paste the fragment marked '",
-                                                              node[[recursionColName]],
-                                                              "' here."),
-                                                       width=76-lvlnchar, prefix=paste0(lvlSpaces, commentPrefix, ' ')),
-                                                collapse="\n"),
-                   "\n",
-                   lvlSpaces, commentPrefix, "\n");
-        
+
+    ### Check whether this is a repeating node
     if (isRepeating(node[[repeatingColName]])) {
       rslt <- paste0(rslt,
+                     lvlSpaces, commentPrefix, "\n",
                      lvlSpaces, commentPrefix, " This recursive element can occur multiple times");
       if (hasOwner(node[[ownerColName]])) {
         rslt <- paste0(rslt, ",\n",
@@ -258,10 +249,15 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
                      lvlSpaces, commentPrefix, " occur more than once.\n");
     }
 
+    
+    ### Add the 'placeholder' that is used to add children of the
+    ### recursive element. This allows us to work with recursive
+    ### elements at arbitrary depths.
     rslt <- paste0(rslt,
                    lvlSpaces, commentPrefix, "\n",
-                   lvlSpaces, "    recursiveElementPlaceholder <- ", currentParentPath,
-                   "$AddChild('", currentElementName, "');\n",
+                   lvlSpaces, recursiveElementPlaceholderName, "_", recursionNesting, " <- \n",
+                   lvlSpaces, "  ", currentParentPath,
+                   "$AddChild('", currentElementName, "');",
                    "\n");
 
     ### Get recursive element extractionscript
@@ -269,12 +265,20 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
       paste0(unlist(FindNode(extractionScriptTree, name=node[[recursionColName]])$Get("extractionscript")), collapse="\n");
     
     ### Add required number of indents
-    recursiveElementExtractionScript <- gsub("\n", paste0("\n", lvlSpaces),
+    recursiveElementExtractionScript <- gsub("\n", paste0("\n", nxtLvlSpaces),
                                              paste0(lvlSpaces, recursiveElementExtractionScript));
     
+    ### Add recursionNesting number to the recursiveElementPlaceholderName
+    # recursiveElementExtractionScript <-
+    #   gsub("_\\[\\[NR\\]\\]", paste0("_", recursionNesting),
+    #        recursiveElementExtractionScript);
+
+    ### Attach this recursive element extraction script to the rest
     rslt <- paste0(rslt,
                    recursiveElementExtractionScript);
 
+    ### If it is a repeating recursive element, add the
+    ### bit to recognize the end
     if (isRepeating(node[[repeatingColName]])) {
       rslt <- paste0(rslt,
                      lvlSpaces, commentPrefix, " <<<END RECURSIVE ELEMENT ", toupper(node$name), ">>>");
@@ -302,6 +306,12 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
 
 ### http://stackoverflow.com/questions/3665115/create-a-file-in-memory-for-user-to-download-not-through-server
 
+###############################################################################
+###############################################################################
+### Checklist functions
+###############################################################################
+###############################################################################
+
 generateChecklistElements <- function(node) {
 
   lvl <- node$level;
@@ -322,10 +332,20 @@ generateChecklistElements <- function(node) {
                   
                   "<br><br>", node$name, "<br><br>",
                   
-                  "<div class='checkbox metabefor-checkbox'>\n",
-                  "<label class=\"metabefor-checkbox-label\"><input type='checkbox' class='metabefor-checkbox-actualcheckbox' name='", id, "' />\n",
-                  node$ChecklistTitle, "</label>\n</div>\n",
-                  "<p class='metabefor-checkbox-description'>", node$ChecklistDescription, "</p>",
+                  "<div class='metabefor-buttons'>\n",
+                  node$ChecklistTitle,
+                  "<p class='metabefor-checkbox-description'>",
+                  node$ChecklistDescription,
+                  "</p>\n",
+                  '<div class="btn-group metabefor-buttongroup" role="group" aria-label="Options">\n',
+                  '<button type="button" class="btn btn-success">Did this</button>\n',
+                  '<button type="button" class="btn btn-danger">Did not do this</button>\n',
+                  '<button type="button" class="btn btn-primary">Not applicable</button>\n',
+                  "</div>\n",
+                  #"<div class='checkbox metabefor-checkbox'>\n",
+                  #"<label class=\"metabefor-checkbox-label\"><input type='checkbox' class='metabefor-checkbox-actualcheckbox' name='", id, "' />\n",
+                  #"</label>",
+                  "\n</div>\n",
                   "<p class='metabefor-book-reference'>",
                   "More information in the Intervention Mapping book at page ",
                   node$BookReference, " and further.</p>\n",
@@ -387,46 +407,14 @@ renderChecklist <- function(extractionScriptTree,
                           collapse="\n");
 
   for (i in 1:nrow(definitions)) {
-    #matchString <- paste0("(", definitions[i, definitionsTermsCol], ")");
-    #matchString <- paste0("<a[^>]*>[^<]*<\\/a|(", definitions[i, definitionsTermsCol], ")");
+    ### Add tooltip to glossary terms - make sure that the regex SKIPs/FAIL
+    ### when inside an A element (i.e. when already inside a tooltop).
     matchString <- paste0("<a[^>]*>[^<]*<\\/a(*SKIP)(*F)|(", definitions[i, definitionsTermsCol], ")");
     definitionToolTip <- paste0('<a class="metabefor-term-definition" data-toggle="tooltip" title="',
                                 definitions[i, definitionsDefCol],
                                 '">\\1</a>');
     checklistBody <- gsub(matchString, definitionToolTip,
                           checklistBody, ignore.case = TRUE, perl=TRUE);
-
-    
-    # checklistBodyXML <- htmlParse(checklistBody, useInternalNodes = TRUE);
-    # 
-    # checklistBodyNodes <- xpathApply(checklistBodyXML, "////*");
-    # invisible(sapply(checklistBodyNodes, function(n) {
-    #   print(xmlValue(n));
-    #   newNodeText <- gsub(matchString, definitionToolTip,
-    #                       xmlValue(n),
-    #                       ignore.case=TRUE);
-    #   xmlValue(n) <- newNodeText;
-    #   print(xmlValue(n));
-    # }));
-    # cat0("definition", i, "\n");
-    # browser();
-    # checklistBody <- toString(checklistBodyNodes);
-
-    # checklistBodyProcessed <- xpathApply(checklistBodyXML, "////*",
-    # checklistBodyProcessed <- xpathApply(checklistBodyXML, "////text()",
-    #                                      function(node) {
-    #                                        xmlValue(node) <-
-    #                                          gsub(matchString, definitionToolTip, xmlValue(node), ignore.case=TRUE);
-    #                                      });
-          
-    # checklistBodyProcessed <- xpathApply(checklistBodyXML, "//text()",
-    #                                      gsub, pattern=matchString,
-    #                                      replacement=definitionToolTip,
-    #                                      ignore.case=TRUE);
-    # checklistBody <- toString(checklistBodyProcessed);
-    #browser();
-    # checklistBody <- gsub(matchString, definitionToolTip,
-    #                       checklistBody, ignore.case = TRUE);
   }
 
   ### Add footer info
@@ -458,8 +446,22 @@ renderChecklist <- function(extractionScriptTree,
                                  "</div>\n");
   
   checklistScript <- paste0(checklistScript,
-                            '$( "#metabefor-definitions-toggle" ).click(function() {',
-                            '  $( "#metabefor-definitions-overflowbox" ).toggle();',
+                            '\n$(document).ready(function(){\n',
+                            "  var visible = false;",
+                            '$( "#metabefor-definitions-toggle" ).click(function() {\n',
+                            "  if ( visible ) {\n",
+                            "    $( '#metabefor-definitions-overflowbox' ).slideUp('fast',function(){\n",
+                            "      $( '#metabefor-definitions-overflowbox' ).addClass('metabefor-hidden')\n",
+                            "           .slideDown(0);\n",
+                            "    });\n",
+                            "  } else {\n",
+                            "    $( '#metabefor-definitions-overflowbox' ).slideUp(0,function(){\n",
+                            "      $( '#metabefor-definitions-overflowbox' ).removeClass('metabefor-hidden')\n",
+                            "           .slideDown('fast');\n",
+                            "    });\n",
+                            "  }\n",
+                            "  visible = ! visible;\n",
+                            "});\n",
                             '});');
   
   ### (The metabefor-header and the checklist definitions are placed after the main
@@ -622,15 +624,21 @@ extractionScriptDiagram <- add_global_graph_attrs(extractionScriptDiagram, "rank
 
 # render_graph(extractionScriptDiagram);
 
-export_graph(extractionScriptDiagram,
-             file_name=file.path(basePath,
-                     "extraction script tree.svg"));
+### Temporarily disabled to speed the script up
+# export_graph(extractionScriptDiagram,
+#              file_name=file.path(basePath,
+#                      "extraction script tree.svg"));
 
 # export_graph(grViz(ToGraphViz(extractionScriptTree)),
 #              file_name=file.path(basePath,
 #                      "extraction script tree.png"));
 
 ```
+
+
+
+
+
 
 ```{r build-extraction-script}
 ###################################################################################
@@ -676,7 +684,7 @@ FindNode(extractionScriptTree, name=recursionsName)$Do(function(node) {
     recursionNesting <- node$level - recursionRootLevel - 1;
     
     ### Relative path to root
-    recursiveElementPlaceholderPath <- paste0(recursiveElementPlaceholderName,
+    recursiveElementPlaceholderPath <- paste0(recursiveElementPlaceholderName, "_[[NR]]",
                                               returnPathToRoot(node$parent,
                                                                considerRoot = Navigate(node, rep("..", max(1, recursionNesting - 1)))$name));
         
@@ -690,7 +698,8 @@ FindNode(extractionScriptTree, name=recursionsName)$Do(function(node) {
         node$extractionscript <- paste0(node$extractionscript, "\n",
                                         lvlSpaces, "#", repStr(">", 79-lvlnchar), "\n",
                                         lvlSpaces, "#>>\n",
-                                        paste0(strwrap(paste0("In this file, locate and copy-paste the fragment marked '",
+                                        paste0(strwrap(paste0("In this file, locate and copy-paste ",
+                                                              "the fragment marked '",
                                                               node[[recursionColName]],
                                                               "' here."),
                                                        width=76-lvlnchar, prefix=paste0(lvlSpaces, "#>> ")),
