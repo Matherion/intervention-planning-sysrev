@@ -560,8 +560,8 @@ renderChecklist <- function(extractionScriptTree,
     definitionToolTip <- paste0('<a class="metabefor-term-definition" data-toggle="tooltip" title="',
                                 definitions[i, definitionsDefCol],
                                 '">\\1</a>');
-    checklistBody <- gsub(matchString, definitionToolTip,
-                          checklistBody, ignore.case = TRUE, perl=TRUE);
+    # checklistBody <- gsub(matchString, definitionToolTip,
+    #                       checklistBody, ignore.case = TRUE, perl=TRUE);
   }
 
   ### Add footer info
