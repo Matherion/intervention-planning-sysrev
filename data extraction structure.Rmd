@@ -172,6 +172,7 @@ extractionScriptMethod <- function(node,
 
   #### Initialize values
   lvlnchar <- nchar(lvlSpaces);
+  commentPrefix <- paste0("#", fillerSymbol, fillerSymbol);
 
   ### Title extraction script
   extractionScript.title <- 
@@ -548,7 +549,14 @@ renderChecklist <- function(extractionScriptTree,
   for (i in 1:nrow(definitions)) {
     ### Add tooltip to glossary terms - make sure that the regex SKIPs/FAIL
     ### when inside an A element (i.e. when already inside a tooltop).
-    matchString <- paste0("<a[^>]*>[^<]*<\\/a(*SKIP)(*F)(", definitions[i, definitionsTermsCol], ")");
+    
+    ### <a[^>]*>[^<]*<\\/a
+    ### <input[^>]*>[^<]*<\\/input
+    ### (*SKIP)(*FAIL)
+    
+    ### See http://www.rexegg.com/regex-best-trick.html
+    
+    matchString <- paste0("(?:<a[^>]*>[^<]*<\\/a|<input[^>]*>[^<]*<\\/input)(*SKIP)(*FAIL)|(", definitions[i, definitionsTermsCol], ")");
     definitionToolTip <- paste0('<a class="metabefor-term-definition" data-toggle="tooltip" title="',
                                 definitions[i, definitionsDefCol],
                                 '">\\1</a>');
