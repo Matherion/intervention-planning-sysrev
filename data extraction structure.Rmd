@@ -157,6 +157,97 @@ hasOwner <- function(x) {
 ###############################################################################
 ###############################################################################
 
+extractionScriptMethod <- function(node,
+                                   parentVector = c(parentVector, node$name),
+                                   lvlSpaces = "  ",
+                                   fillerSymbol = "#",
+                                   recursionNesting = 0,
+                                   activityColName = "Activity",
+                                   descriptionColName = "Description",
+                                   repeatingColName = "Repeating",
+                                   recursionColName = "Recursion",
+                                   collapsingColName = "Collapse",
+                                   ownerColName = "Owner",
+                                   recursiveElementPlaceholderName = 'recursiveElementPlaceholder') {
+
+  #### Initialize values
+  lvlnchar <- nchar(lvlSpaces);
+
+  ### Title extraction script
+  extractionScript.title <- 
+    paste0(lvlSpaces, "#", repStr(fillerSymbol, 79-lvlnchar), "\n",
+           lvlSpaces, commentPrefix, "\n",
+           paste0(strwrap(toupper(node[[activityColName]]),
+                          width=76-lvlnchar,
+                          prefix=paste0(lvlSpaces, commentPrefix, " ")),
+                  collapse="\n"));
+  
+  ### Description extraction script (if it exists for this node)
+  if (!is.null(node[[descriptionColName]])) {
+    extractionScript.description <-
+      paste0(lvlSpaces, commentPrefix, "\n",
+             paste0(strwrap(node[[descriptionColName]],
+                            width=76-lvlnchar,
+                            prefix=paste0(lvlSpaces, commentPrefix, " ")),
+                    collapse="\n"), "\n");
+  }
+  
+  ### Child addition extraction script
+  if (isRecursive(node[[recursionColName]])) {
+    
+    ### This is a recursive element, which means that if it's a repeating
+    ### element, we need to give it a different name, with a number
+    
+    currentElementName <- ifelse(isRepeating(node[[repeatingColName]]),
+                                 paste0(node$name, "_.1._"),
+                                 node$name);
+
+    if (node[[recursionColName]] == TRUE) {
+      ### We're not in the intervention tree, but in the recursive elements tree,
+      ### and we're building the extraction script for that recursive element
+      
+      ### Add this later
+      
+    } else if (recursionNesting == 0) {
+      ### Currently not in a recursive element, but we will start a recursive element now
+      extractionScript.addChild <-
+        paste0(lvlSpaces, recursiveElementPlaceholderName, "_", recursionNesting + 1, " <- \n",
+               lvlSpaces, "  ", returnPathToRoot(node$parent),
+               "$AddChild('", currentElementName, "');");
+    } else {
+      ### We're already recursing - so we just go one level deeper
+      extractionScript.addChild <-
+          paste0(lvlSpaces, recursiveElementPlaceholderName, "_", recursionNesting + 1, " <- \n",
+                 lvlSpaces, "  ", recursiveElementPlaceholderName, "_", recursionNesting,
+                 "$AddChild('", currentElementName, "');");
+    }
+  } else {
+    
+    ### This is not a recursive element, so we can just add it. If it is
+    ### repeating, we just add a list as value (later on).
+    
+    extractionScript.addChild <-
+      paste0(lvlSpaces,
+             returnPathToRoot(node$parent),
+             "$AddChild('", node$name, "');");
+  }
+
+  ### Now, for leafs, we can add the bit where the value is generated, concatenate
+  ### everything, and we can return our result.
+  
+  ### For branches, we have to retrieve the extractionscripts for all our children,
+  ### concatenate this with what we have, and then we can return our result.
+  
+  ### For recursive elements, we have to generate the scripts for those elements,
+  ### concatenate this with what we have, and then we can return our result.
+
+  ### So basically, for those last two, we call ourselves for each child, with the right
+  ### recursionNesting and fillerSymbol arguments
+
+}
+
+
+
 leafExtractionscript <- function(node, lvlSpaces="  ",
                                  fillerSymbol = "#",
                                  recursionNesting=0) {
@@ -240,7 +331,10 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
         rslt <- paste0(rslt, ",\n",
                        lvlSpaces, commentPrefix, " specifically, once for each '",
                        node[[ownerColName]], "'.\n");
+      } else {
+        rslt <- paste0(rslt, ".\n");
       }
+      
       rslt <- paste0(rslt,
                      lvlSpaces, commentPrefix, "\n",
                      lvlSpaces, commentPrefix, " You may want to copy the lines below, until the text\n",
@@ -261,17 +355,41 @@ leafExtractionscript <- function(node, lvlSpaces="  ",
                    "\n");
 
     ### Get recursive element extractionscript
+    
+    ### If this recursionColName is already in the list with parents, just refer people
+    ### to the recursive element at the bottom of the extraction script and tell them to
+    ### copy-paste that here.
+    
+    ### Generate this dynamically - pass the names for all the parents so far.
+
     recursiveElementExtractionScript <-
-      paste0(unlist(FindNode(extractionScriptTree, name=node[[recursionColName]])$Get("extractionscript")), collapse="\n");
+      FindNode(extractionScriptTree,
+               name=node[[recursionColName]])$Do(extractionScriptMethod,
+                                                 parentVector = c(parentVector, node$name),
+                                                 lvlSpaces = "  ",
+                                                 fillerSymbol = "#",
+                                                 recursionNesting = 0);
+      
+      
+      paste0(unlist(FindNode(extractionScriptTree,
+                             name=node[[recursionColName]])$Get("extractionscript")),
+             collapse="\n");
+    
+    
+    recursiveElementExtractionScript <-
+      paste0(unlist(FindNode(extractionScriptTree,
+                             name=node[[recursionColName]])$Get("extractionscript")),
+             collapse="\n");
     
     ### Add required number of indents
     recursiveElementExtractionScript <- gsub("\n", paste0("\n", nxtLvlSpaces),
                                              paste0(lvlSpaces, recursiveElementExtractionScript));
     
+
     ### Add recursionNesting number to the recursiveElementPlaceholderName
-    # recursiveElementExtractionScript <-
-    #   gsub("_\\[\\[NR\\]\\]", paste0("_", recursionNesting),
-    #        recursiveElementExtractionScript);
+    recursiveElementExtractionScript <-
+      gsub("_\\[\\[NR\\]\\]", paste0("_", recursionNesting),
+           recursiveElementExtractionScript);
 
     ### Attach this recursive element extraction script to the rest
     rslt <- paste0(rslt,
@@ -329,26 +447,47 @@ generateChecklistElements <- function(node) {
                   '</div>'));
   } else if (isLeaf(node)) {
     return(paste0("<div class='metabefor-checkbox-container'>",
+
+                  #"<br><br>", node$name, "<br><br>",
+
+                  "<div id='metabefor-checkbox-", node$name, "' class='metabefor-checkbox-svg-container', >",
                   
-                  "<br><br>", node$name, "<br><br>",
+                  
+                  '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 11.1125 11.112501" height="42" width="42"><path style="fill:#FFFFFF;fill-opacity:1;fill-rule:evenodd;stroke:none;" d="M 0.72039847,5.5008244 5.0912096,10.409253 10.343529,0.77453521 4.4461307,7.4949906 Z" class="checkbox-checkmark" /><path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5291667;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1" d="M 0.26458335,0.26458335 H 10.847916 V 10.847916 H 0.26458335 v -10.58333265 0" class="checkbox-border" /></svg>',
+
+
+                  "</div>",
+                  
                   
                   "<div class='metabefor-buttons'>\n",
+                  "<div class='metabefor-checklist-title'>\n",
                   node$ChecklistTitle,
-                  "<p class='metabefor-checkbox-description'>",
+                  "</div>",
+                  "<div class='metabefor-checkbox-description'>",
                   node$ChecklistDescription,
-                  "</p>\n",
-                  '<div class="btn-group metabefor-buttongroup" role="group" aria-label="Options">\n',
-                  '<button type="button" class="btn btn-success">Did this</button>\n',
-                  '<button type="button" class="btn btn-danger">Did not do this</button>\n',
-                  '<button type="button" class="btn btn-primary">Not applicable</button>\n',
                   "</div>\n",
-                  #"<div class='checkbox metabefor-checkbox'>\n",
-                  #"<label class=\"metabefor-checkbox-label\"><input type='checkbox' class='metabefor-checkbox-actualcheckbox' name='", id, "' />\n",
-                  #"</label>",
+                  
+                  "<div class='metabefor-book-reference' id='#metabefor-bookreference-", node$name, "'>",
+                  ifelse(grepl("[A-Za-z]", node$BookReference),
+                         node$BookReference,
+                         paste0("More information in the Intervention Mapping book at page ",
+                                node$BookReference, " and further.")),
+                  "</div>\n",
+                  
+                  
+                  '<div class="btn-group metabefor-buttongroup" data-toggle="buttons" aria-label="Options">\n',
+                  '<label class="btn btn-success" onclick="checkboxYes(\'', node$name, '\')">\n',
+                  '<input type="radio" name="options" id="metabefor-checkbox-', node$name, '-yes" autocomplete="off"> Did this',
+                  '</label>',
+                  '<label class="btn btn-danger" onclick="checkboxNo(\'', node$name, '\')">\n',
+                  '<input type="radio" name="options" id="metabefor-checkbox-', node$name, '-no" autocomplete="off"> Did not do this',
+                  '</label>',
+                  '<label class="btn btn-primary" onclick="checkboxNA(\'', node$name, '\')">\n',
+                  '<input type="radio" name="options" id="metabefor-checkbox-', node$name, '-na" autocomplete="off"> Not applicable',
+                  '</label>',
+
+                  "</div>\n",
                   "\n</div>\n",
-                  "<p class='metabefor-book-reference'>",
-                  "More information in the Intervention Mapping book at page ",
-                  node$BookReference, " and further.</p>\n",
                   "</div>"));
   } else {
     return(paste0('<div class="metabefor-nesting metabefor-nesting-level', lvl, '">\n',
@@ -409,7 +548,7 @@ renderChecklist <- function(extractionScriptTree,
   for (i in 1:nrow(definitions)) {
     ### Add tooltip to glossary terms - make sure that the regex SKIPs/FAIL
     ### when inside an A element (i.e. when already inside a tooltop).
-    matchString <- paste0("<a[^>]*>[^<]*<\\/a(*SKIP)(*F)|(", definitions[i, definitionsTermsCol], ")");
+    matchString <- paste0("<a[^>]*>[^<]*<\\/a(*SKIP)(*F)(", definitions[i, definitionsTermsCol], ")");
     definitionToolTip <- paste0('<a class="metabefor-term-definition" data-toggle="tooltip" title="',
                                 definitions[i, definitionsDefCol],
                                 '">\\1</a>');
@@ -463,6 +602,29 @@ renderChecklist <- function(extractionScriptTree,
                             "  visible = ! visible;\n",
                             "});\n",
                             '});');
+  
+  checklistScript <- paste0(checklistScript, "
+
+  checkboxYes = function(elementIdentifier) {
+    $('#metabefor-checkbox-'+elementIdentifier+' .checkbox-checkmark').css(\"fill\", \"#008800\");
+    $('#metabefor-checkbox-'+elementIdentifier+' .checkbox-border').css(\"stroke\", \"#008800\");
+    $('#metabefor-bookreference-'+elementIdentifier).hide();
+  }
+  
+  checkboxNo = function(elementIdentifier) {
+    $('#metabefor-checkbox-'+elementIdentifier+' .checkbox-checkmark').css(\"fill\", \"#FFFFFF\");
+    $('#metabefor-checkbox-'+elementIdentifier+' .checkbox-border').css(\"stroke\", \"#880000\");
+    $('#metabefor-bookreference-'+elementIdentifier).show();
+  }
+
+  checkboxNA = function(elementIdentifier) {
+    $('#metabefor-checkbox-'+elementIdentifier+' .checkbox-checkmark').css(\"fill\", \"#FFFFFF\");
+    $('#metabefor-checkbox-'+elementIdentifier+' .checkbox-border').css(\"stroke\", \"#CCCCDD\");
+    $('#metabefor-bookreference-'+elementIdentifier).hide();
+  }
+
+  ");
+  
   
   ### (The metabefor-header and the checklist definitions are placed after the main
   ###  content, so that it's rendered on top of that content.)
@@ -721,7 +883,7 @@ FindNode(extractionScriptTree, name=recursionsName)$Do(function(node) {
       node$extractionscript <- paste0(node$extractionscript,
                                       lvlSpaces,
                                       recursiveElementPlaceholderPath,
-                                      "$AddChild('", node$name, "');\n");
+                                      "$AddChild('", node$name, "');");
     } else {
       stop("This node has a level *below* the recursion tree root level!");
     }
