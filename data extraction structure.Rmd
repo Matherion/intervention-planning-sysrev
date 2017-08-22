@@ -478,13 +478,13 @@ generateChecklistElements <- function(node) {
                   
                   '<div class="btn-group metabefor-buttongroup" data-toggle="buttons" aria-label="Options">\n',
                   '<label class="btn btn-success" onclick="checkboxYes(\'', node$name, '\')">\n',
-                  '<input type="radio" name="options" id="metabefor-checkbox-', node$name, '-yes" autocomplete="off"> Did this',
+                  '<input type="radio" name="options" id="metabefor-checkbox-', node$name, '-yes" autocomplete="off"></input> Did this',
                   '</label>',
                   '<label class="btn btn-danger" onclick="checkboxNo(\'', node$name, '\')">\n',
-                  '<input type="radio" name="options" id="metabefor-checkbox-', node$name, '-no" autocomplete="off"> Did not do this',
+                  '<input type="radio" name="options" id="metabefor-checkbox-', node$name, '-no" autocomplete="off"></input> Did not do this',
                   '</label>',
                   '<label class="btn btn-primary" onclick="checkboxNA(\'', node$name, '\')">\n',
-                  '<input type="radio" name="options" id="metabefor-checkbox-', node$name, '-na" autocomplete="off"> Not applicable',
+                  '<input type="radio" name="options" id="metabefor-checkbox-', node$name, '-na" autocomplete="off"></input> Not applicable',
                   '</label>',
 
                   "</div>\n",
