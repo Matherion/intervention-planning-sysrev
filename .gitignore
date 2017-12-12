@@ -3,7 +3,7 @@
 .RData
 .Ruserdata
 .httr-oauth*
-*.html
+#*.html
 *.svg
 *.csv
 wim-googlesheet.csv

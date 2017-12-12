@@ -500,6 +500,7 @@ generateChecklistElements <- function(node) {
 
 renderChecklist <- function(extractionScriptTree,
                             checklistRoot = NULL,
+                            preChecklistHtml = NULL,
                             outputFile = NULL,
                             css = "html {\n  font-family: sans-serif;\n}",
                             header = paste0('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">\n',
@@ -537,7 +538,7 @@ renderChecklist <- function(extractionScriptTree,
   }
     
   checklistHeader <- paste0(checklistHeader, "</head>\n\n<body>\n");
-
+  
   if (is.null(checklistRoot)) {
     checklistRoot <- extractionScriptTree$root$name;
   }
@@ -632,12 +633,20 @@ renderChecklist <- function(extractionScriptTree,
   }
 
   ");
-  
-  
+
+  preChecklistHtmlText <- "";
+  if (!is.null(preChecklistHtml)) {
+    if (file.exists(preChecklistHtml)) {
+      preChecklistHtmlText <- readLines(preChecklistHtml,
+                                        encoding="UTF-8");
+    }
+  } 
+
   ### (The metabefor-header and the checklist definitions are placed after the main
   ###  content, so that it's rendered on top of that content.)
-  checklistBody <- paste0(checklistHeader,
+  checklistBody <- paste0(checklistHeader, "\n",
                           "\n<div class='metabefor-content-container'>\n",
+                          paste(preChecklistHtmlText, collapse="\n", sep="\n"),
                           "\n<div class=\"form-group\">\n",
                           checklistBody, "\n",
                           "</div>\n</div>\n",
@@ -794,10 +803,10 @@ extractionScriptDiagram <- add_global_graph_attrs(extractionScriptDiagram, "rank
 
 # render_graph(extractionScriptDiagram);
 
-### Temporarily disabled to speed the script up
-# export_graph(extractionScriptDiagram,
-#              file_name=file.path(basePath,
-#                      "extraction script tree.svg"));
+## Temporarily disabled to speed the script up
+export_graph(extractionScriptDiagram,
+             file_name=file.path(basePath,
+                     "extraction script tree.svg"));
 
 # export_graph(grViz(ToGraphViz(extractionScriptTree)),
 #              file_name=file.path(basePath,
@@ -1066,6 +1075,7 @@ writeLines(paste0(extractionScript, collapse=""),
 
 renderChecklist(extractionScriptTree,
                 checklistRoot = 'intervention',
+                preChecklistHtml = file.path(basePath, "checklist_frontpage.html"),
                 outputFile = file.path(basePath, "checklist.html"),
                 css = file.path(basePath, 'checklist.css'),
                 definitions = definitions);

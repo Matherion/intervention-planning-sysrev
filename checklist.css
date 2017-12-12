@@ -186,3 +186,35 @@ a.metabefor-term-definition:hover {
 tr:nth-child(even) {
   background-color: #CCCCCC;
 }
+
+.im-logo {
+  display: block;
+  width: 200px;
+  margin: 40px auto;
+}
+
+div.checklist-intro h1, div.checklist-intro h2 {
+  padding: 0px;
+}
+
+.title {
+  font-size: 3em;
+  text-align: center;
+  margin: 10px auto;
+}
+
+.subtitle {
+  font-size: 1.5em;
+  text-align: center;
+  margin: 10px auto;
+}
+
+div.checklist-intro {
+  margin: 20px 40px;
+  page-break: after;
+}
+
+p.checklist-intro {
+  font-size:1.25em;
+}
+
