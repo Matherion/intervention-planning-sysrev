@@ -1080,15 +1080,6 @@ renderChecklist(extractionScriptTree,
                 css = file.path(basePath, 'checklist.css'),
                 definitions = definitions);
 
-### Upload checklist
-# if (require('RCurl')) {
-#   if (url.exists('http://interventionchecklist.com/')) {
-#     ftpUpload(file.path(packageBuildingPath, binFile),
-#               paste0("ftp://userfriendlyscience.com/", binFile),
-#               userpwd="packageUploads@interventionchecklist.com:Ju=1_pyT3@V6KR30qq8V");
-#   }
-# }
-
 ###############################################################################
 
 ```
