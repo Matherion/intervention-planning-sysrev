@@ -209,6 +209,14 @@ div.checklist-intro h1, div.checklist-intro h2 {
   margin: 10px auto;
 }
 
+.subtitle {
+  width: 50%;
+  min-width: 200px;
+  font-size: .8em;
+  text-align: center;
+  margin: 10px auto;
+}
+
 div.checklist-intro {
   margin: 20px 40px;
   page-break: after;
