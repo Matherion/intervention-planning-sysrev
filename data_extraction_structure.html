@@ -118,7 +118,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Data Extraction Structure</h1>
 <h4 class="author"><em>Gjalt-Jorn Ygram Peters</em></h4>
-<h4 class="date"><em>2018-03-27 om 14:20:43</em></h4>
+<h4 class="date"><em>2018-03-27 om 14:30:23</em></h4>
 
 </div>
 
@@ -499,7 +499,7 @@ generateChecklistElements &lt;- function(node) {
                   &quot;&lt;div id='metabefor-checkbox-&quot;, node$name, &quot;' class='metabefor-checkbox-svg-container', &gt;&quot;,
                   
                   
-                  '&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 11.1125 11.112501&quot; height=&quot;42&quot; width=&quot;42&quot;&gt;&lt;path style=&quot;fill:#FFFFFF;fill-opacity:1;fill-rule:evenodd;stroke:none;&quot; d=&quot;M 0.72039847,5.5008244 5.0912096,10.409253 10.343529,0.77453521 4.4461307,7.4949906 Z&quot; class=&quot;checkbox-checkmark&quot; /&gt;&lt;path style=&quot;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5291667;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1&quot; d=&quot;M 0.26458335,0.26458335 H 10.847916 V 10.847916 H 0.26458335 v -10.58333265 0&quot; class=&quot;checkbox-border&quot; /&gt;&lt;/svg&gt;',
+                  '&lt;svg xmlns=&quot;https://www.w3.org/2000/svg&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 11.1125 11.112501&quot; height=&quot;42&quot; width=&quot;42&quot;&gt;&lt;path style=&quot;fill:#FFFFFF;fill-opacity:1;fill-rule:evenodd;stroke:none;&quot; d=&quot;M 0.72039847,5.5008244 5.0912096,10.409253 10.343529,0.77453521 4.4461307,7.4949906 Z&quot; class=&quot;checkbox-checkmark&quot; /&gt;&lt;path style=&quot;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5291667;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1&quot; d=&quot;M 0.26458335,0.26458335 H 10.847916 V 10.847916 H 0.26458335 v -10.58333265 0&quot; class=&quot;checkbox-border&quot; /&gt;&lt;/svg&gt;',
 
                   &quot;&lt;/div&gt;&quot;,
                   
@@ -603,8 +603,6 @@ renderChecklist &lt;- function(extractionScriptTree,
     
     matchString &lt;- paste0(&quot;(?:&lt;a[^&gt;]*&gt;[^&lt;]*&lt;\\/a|&lt;input[^&gt;]*&gt;[^&lt;]*&lt;\\/input)(*SKIP)(*FAIL)|(&quot;, definitions[i, definitionsTermsCol], &quot;)&quot;);
     
-    ### Based on https://stackoverflow.com/questions/28784268/retrieve-digits-after-specific-string-in-r?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa
-    #matchString &lt;- paste0(&quot;&lt;a[^&gt;]*&gt;[^&lt;]*&lt;\\/a(&quot;, definitions[i, definitionsTermsCol], &quot;)&quot;);
     definitionToolTip &lt;- paste0('&lt;a class=&quot;metabefor-term-definition&quot; data-toggle=&quot;tooltip&quot; title=&quot;',
                                 definitions[i, definitionsDefCol],
     #                            '&quot;&gt;', definitions[i, definitionsTermsCol], '&lt;/a&gt;');
