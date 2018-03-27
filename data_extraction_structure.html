@@ -118,7 +118,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Data Extraction Structure</h1>
 <h4 class="author"><em>Gjalt-Jorn Ygram Peters</em></h4>
-<h4 class="date"><em>2017-12-13 om 11:29:55</em></h4>
+<h4 class="date"><em>2018-03-27 om 14:20:43</em></h4>
 
 </div>
 
@@ -602,11 +602,15 @@ renderChecklist &lt;- function(extractionScriptTree,
     ### See http://www.rexegg.com/regex-best-trick.html
     
     matchString &lt;- paste0(&quot;(?:&lt;a[^&gt;]*&gt;[^&lt;]*&lt;\\/a|&lt;input[^&gt;]*&gt;[^&lt;]*&lt;\\/input)(*SKIP)(*FAIL)|(&quot;, definitions[i, definitionsTermsCol], &quot;)&quot;);
+    
+    ### Based on https://stackoverflow.com/questions/28784268/retrieve-digits-after-specific-string-in-r?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa
+    #matchString &lt;- paste0(&quot;&lt;a[^&gt;]*&gt;[^&lt;]*&lt;\\/a(&quot;, definitions[i, definitionsTermsCol], &quot;)&quot;);
     definitionToolTip &lt;- paste0('&lt;a class=&quot;metabefor-term-definition&quot; data-toggle=&quot;tooltip&quot; title=&quot;',
                                 definitions[i, definitionsDefCol],
+    #                            '&quot;&gt;', definitions[i, definitionsTermsCol], '&lt;/a&gt;');
                                 '&quot;&gt;\\1&lt;/a&gt;');
-    # checklistBody &lt;- gsub(matchString, definitionToolTip,
-    #                       checklistBody, ignore.case = TRUE, perl=TRUE);
+    checklistBody &lt;- gsub(matchString, definitionToolTip,
+                          checklistBody, ignore.case = TRUE, perl=TRUE);
   }
 
   ### Add footer info

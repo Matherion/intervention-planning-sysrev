@@ -558,11 +558,13 @@ renderChecklist <- function(extractionScriptTree,
     ### See http://www.rexegg.com/regex-best-trick.html
     
     matchString <- paste0("(?:<a[^>]*>[^<]*<\\/a|<input[^>]*>[^<]*<\\/input)(*SKIP)(*FAIL)|(", definitions[i, definitionsTermsCol], ")");
+    
     definitionToolTip <- paste0('<a class="metabefor-term-definition" data-toggle="tooltip" title="',
                                 definitions[i, definitionsDefCol],
+    #                            '">', definitions[i, definitionsTermsCol], '</a>');
                                 '">\\1</a>');
-    # checklistBody <- gsub(matchString, definitionToolTip,
-    #                       checklistBody, ignore.case = TRUE, perl=TRUE);
+    checklistBody <- gsub(matchString, definitionToolTip,
+                          checklistBody, ignore.case = TRUE, perl=TRUE);
   }
 
   ### Add footer info
