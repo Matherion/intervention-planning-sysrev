@@ -469,10 +469,13 @@ generateChecklistElements <- function(node) {
                   "</div>\n",
                   
                   "<div class='metabefor-book-reference' id='#metabefor-bookreference-", node$name, "'>",
-                  ifelse(grepl("[A-Za-z]", node$BookReference),
-                         node$BookReference,
-                         paste0("More information in the Intervention Mapping book at page ",
-                                node$BookReference, " and further.")),
+                  ifelse(grepl("[A-Za-z]", node$BookReference_4),
+                         node$BookReference_4,
+                         paste0("More information in the Intervention Mapping book, fourth edition, at page ",
+                                node$BookReference_4, " and further.")),
+                  ifelse(nchar(node$OtherReference) > 0,
+                         paste0("\n", node$OtherReference),
+                         ""),
                   "</div>\n",
                   
                   
