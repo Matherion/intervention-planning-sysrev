@@ -1,6 +1,6 @@
 ---
 title: "Systematic Review Extraction Script Template"
-date: "12 dec 2018 at 20:02:09"
+date: "12 dec 2018 at 20:31:51"
 output:
   html_document:
     self-contained: yes
@@ -5643,9 +5643,6 @@ study <- Node$new('study');
             ### MAINTENANCE OUTCOMES (AND THEN IDENTIFY AGENTS,
             ### BEHAVIORAL OUTCOMES, PERFORMANCE OBJECTIVES,
             ### ETC)
-            ### 
-            ### Any description of environmental outcome(s)
-            ### that contribute to the performance objective(s)
             ### 
             ####################################################################
                 
