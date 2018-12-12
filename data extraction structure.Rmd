@@ -107,7 +107,7 @@ isCollapsing <- function(x) {
   } else if (trim(toupper(x)) == "AND") {
     return(TRUE);
   } else {
-    stop("For 'Recursion', value '", x, "' encountered.");
+    stop("For 'Collapsing', value '", x, "' encountered.");
   }
 }
 
@@ -116,7 +116,7 @@ isRecursive <- function(x) {
     return(FALSE);
   } else if (is.na(x)) {
     return(FALSE);
-  } else if (nchar(x) == 0) {
+  } else if (nchar(trim(x)) == 0) {
     return(FALSE);
   } else if (nchar(trim(x)) > 0) {
     return(TRUE);
@@ -144,7 +144,7 @@ hasOwner <- function(x) {
     return(FALSE);
   } else if (is.na(x)) {
     return(FALSE);
-  } else if (nchar(x) == 0) {
+  } else if (nchar(trim(x)) == 0) {
     return(FALSE);
   } else if (nchar(trim(x)) > 0) {
     return(TRUE);
@@ -447,11 +447,21 @@ generateChecklistElements <- function(node) {
                            generateChecklistElements), collapse="\n"),
                   '</div>'));
   } else if (isLeaf(node)) {
+    
+    ### We're going to construct a checkbox, with a name (title) and a description,
+    ### as well as three buttons to toggle the checkbox status.
+    ### To prevent recursive elements to have duplicated id's, we need to add
+    ### a unique string to the id.
+    uniqueId <- paste0(c(node$name,
+                         as.numeric(format(Sys.time(), "%OS3")) * 1000,
+                         sample(LETTERS, 3, TRUE)),
+                       collapse="");
+    
     return(paste0("<div class='metabefor-checkbox-container'>",
 
                   #"<br><br>", node$name, "<br><br>",
 
-                  "<div id='metabefor-checkbox-", node$name, "' class='metabefor-checkbox-svg-container', >",
+                  "<div id='metabefor-checkbox-", uniqueId, "' class='metabefor-checkbox-svg-container'>",
                   
                   
                   '<svg xmlns="https://www.w3.org/2000/svg" version="1.1" viewBox="0 0 11.1125 11.112501" height="42" width="42"><path style="fill:#FFFFFF;fill-opacity:1;fill-rule:evenodd;stroke:none;" d="M 0.72039847,5.5008244 5.0912096,10.409253 10.343529,0.77453521 4.4461307,7.4949906 Z" class="checkbox-checkmark" /><path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5291667;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1" d="M 0.26458335,0.26458335 H 10.847916 V 10.847916 H 0.26458335 v -10.58333265 0" class="checkbox-border" /></svg>',
@@ -461,33 +471,33 @@ generateChecklistElements <- function(node) {
                   
                   
                   "<div class='metabefor-buttons'>\n",
-                  "<div class='metabefor-checklist-title'>\n",
+                  "<span class='metabefor-checklist-title'>\n",
                   node$ChecklistTitle,
-                  "</div>",
-                  "<div class='metabefor-checkbox-description'>",
+                  "</span>",
+                  "<span class='metabefor-checkbox-description'>",
                   node$ChecklistDescription,
-                  "</div>\n",
+                  "</span>\n",
                   
                   "<div class='metabefor-book-reference' id='#metabefor-bookreference-", node$name, "'>",
                   ifelse(grepl("[A-Za-z]", node$BookReference_4),
-                         node$BookReference_4,
-                         paste0("More information in the Intervention Mapping book, fourth edition, at page ",
-                                node$BookReference_4, " and further.")),
+                         paste0("<p>", node$BookReference_4, "</p>"),
+                         paste0("<p>More information in the Intervention Mapping book, fourth edition, at page ",
+                                node$BookReference_4, " and further.</p>")),
                   ifelse(nchar(node$OtherReference) > 0,
-                         paste0("\n", node$OtherReference),
+                         paste0("<p>", node$OtherReference, "</p>"),
                          ""),
                   "</div>\n",
                   
                   
                   '<div class="btn-group metabefor-buttongroup" data-toggle="buttons" aria-label="Options">\n',
-                  '<label class="btn btn-success" onclick="checkboxYes(\'', node$name, '\')">\n',
-                  '<input type="radio" name="options" id="metabefor-checkbox-', node$name, '-yes" autocomplete="off"></input> Did this',
+                  '<label class="btn btn-success" onclick="checkboxYes(\'', uniqueId, '\')">\n',
+                  '<input type="radio" name="options" id="metabefor-checkbox-', uniqueId, '-yes" autocomplete="off"></input> Did this',
                   '</label>',
-                  '<label class="btn btn-danger" onclick="checkboxNo(\'', node$name, '\')">\n',
-                  '<input type="radio" name="options" id="metabefor-checkbox-', node$name, '-no" autocomplete="off"></input> Did not do this',
+                  '<label class="btn btn-danger" onclick="checkboxNo(\'', uniqueId, '\')">\n',
+                  '<input type="radio" name="options" id="metabefor-checkbox-', uniqueId, '-no" autocomplete="off"></input> Did not do this',
                   '</label>',
-                  '<label class="btn btn-primary" onclick="checkboxNA(\'', node$name, '\')">\n',
-                  '<input type="radio" name="options" id="metabefor-checkbox-', node$name, '-na" autocomplete="off"></input> Not applicable',
+                  '<label class="btn btn-primary" onclick="checkboxNA(\'', uniqueId, '\')">\n',
+                  '<input type="radio" name="options" id="metabefor-checkbox-', uniqueId, '-na" autocomplete="off"></input> Not applicable',
                   '</label>',
 
                   "</div>\n",
@@ -560,14 +570,37 @@ renderChecklist <- function(extractionScriptTree,
     
     ### See http://www.rexegg.com/regex-best-trick.html
     
-    matchString <- paste0("(?:<a[^>]*>[^<]*<\\/a|<input[^>]*>[^<]*<\\/input)(*SKIP)(*FAIL)|(", definitions[i, definitionsTermsCol], ")");
+    #matchString <- paste0("(?:<a[^>]*>[^<]*<\\/a|<input[^>]*>[^<]*<\\/input|<div[^>]*>[^<]*<\\/div)(*SKIP)(*FAIL)|(", definitions[i, definitionsTermsCol], ")");
     
-    definitionToolTip <- paste0('<a class="metabefor-term-definition" data-toggle="tooltip" title="',
+    ### From https://stackoverflow.com/questions/18621568/regex-replace-text-outside-html-tags (2018-04-12)
+    #matchString <- paste0("(", definitions[i, definitionsTermsCol], ")(?![^<]*>|[^<>]*<\\/)");
+    
+    ### Only replace if it occurs within the description
+    matchString <- paste0("(<span class='metabefor-checkbox-description'>[^<]*)(",
+                          definitions[i, definitionsTermsCol],
+                          ")([^<]*<\\/span>)");
+    
+    definitionToolTip <- paste0('\\1<a class="metabefor-term-definition" data-toggle="tooltip" title="',
                                 definitions[i, definitionsDefCol],
     #                            '">', definitions[i, definitionsTermsCol], '</a>');
-                                '">\\1</a>');
-    checklistBody <- gsub(matchString, definitionToolTip,
-                          checklistBody, ignore.case = TRUE, perl=TRUE);
+                                '">\\2</a>\\3');
+
+  checklistBody <- gsub(matchString, definitionToolTip,
+                        checklistBody, ignore.case = TRUE, perl=FALSE);
+
+    ### From https://stackoverflow.com/questions/14621094/how-to-replace-the-text-inside-an-xml-element-in-r
+    # docAsHTML <- htmlParse(file = checklistBody, asText = TRUE);
+    # nodes <- getNodeSet(docAsHTML, "//Text");
+    # lapply(nodes, function(n) {
+    #   xmlValue(n) <- gsub(definitions[i, definitionsTermsCol],
+    #                       "definitionToolTip",
+    #                       xmlValue(n));
+    # });
+    # 
+    # checklistBody <- saveXML(docAsHTML);
+    # 
+    ### https://github.com/PebbleRoad/glossarizer
+    
   }
 
   ### Add footer info
@@ -799,10 +832,15 @@ extractionScriptTree$Do(function(node) SetNodeStyle(node, fontcolor = "orange", 
                         filterFun = function(node) return(ifelse(is.null(node$Recursion), FALSE,
                                                                  ifelse((node$Recursion!='TRUE'), TRUE, FALSE))));
 
-extractionScriptDiagram <- ToDiagrammeRGraph(extractionScriptTree, direction = "descend");
+extractionScriptDiagram <-
+  ToDiagrammeRGraph(extractionScriptTree, direction = "descend");
 
-extractionScriptDiagram <- set_global_graph_attrs(extractionScriptDiagram, "layout", "dot", "graph");
-extractionScriptDiagram <- add_global_graph_attrs(extractionScriptDiagram, "rankdir", "LR", "graph");
+extractionScriptDiagram <-
+  DiagrammeR::add_global_graph_attrs(extractionScriptDiagram,
+                                     "layout", "dot", "graph");
+extractionScriptDiagram <-
+  DiagrammeR::add_global_graph_attrs(extractionScriptDiagram,
+                                     "rankdir", "LR", "graph");
 
 ### Temporary to speed up the rest
 

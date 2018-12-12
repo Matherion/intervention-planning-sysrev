@@ -48,6 +48,7 @@ h1, h2, h3, h4, h5, h6, h7, h8, h9 {
 .metabefor-checklist-title {
   font-size: 1.2em;
   font-style: bold;
+  display: block;
 }
 
 .metabefor-checkbox {
@@ -86,6 +87,7 @@ input[type="checkbox"].metabefor-checkbox-actualcheckbox, .checkbox input[type="
 .metabefor-checkbox-description {
   /* clear: both; */
   color: black;
+  display: block;
 }
 
 .metabefor-book-reference {
