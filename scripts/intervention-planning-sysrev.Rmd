@@ -154,18 +154,25 @@ plot.rxsStructure <- function(x, ...) {
 
 export.rxsStructure <- function(x,
                                 filename,
+                                ext='svg',
                                 ...) {
 
   diagTree <- rxsTree_to_graph(x);
 
   invisible(DiagrammeR::export_graph(graph=diagTree,
                                      file_name=filename,
-                                     file_type="svg"));
+                                     file_type=ext));
 }
 
 export.rxsStructure(fullObject,
                     filename=file.path(outputPath,
-                                       "full-extractionscript-tree.svg"));
+                                       "full-extractionscript-tree.svg"),
+                    ext='svg');
+
+export.rxsStructure(fullObject,
+                    filename=file.path(outputPath,
+                                       "full-extractionscript-tree.pdf"),
+                    ext='pdf');
 
 ```
 
