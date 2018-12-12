@@ -1,6 +1,6 @@
 ---
 title: "Systematic Review Extraction Script Template"
-date: "12 dec 2018 at 20:31:51"
+date: "12 dec 2018 at 22:10:57"
 output:
   html_document:
     self-contained: yes

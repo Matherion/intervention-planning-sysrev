@@ -101,7 +101,7 @@ prepForDiagrammeR <- function(x) {
   return(gsub("[\"']",
               "`",
               paste(strwrap(x,
-                            width=60),
+                            width=80),
                     collapse="\n")));
 };
 
@@ -136,7 +136,8 @@ rxsTree_to_graph <- function(x) {
                            c("shape", "box", "node"),
                            c("style", "rounded,filled", "node"),
                            c("color", "#000000", "node"),
-                           c("margin", "0.5,0.1", "node"),
+                           c("margin", "0.8,0.1", "node"),
+                           c("fontname", "Nobile", "node"),
                            c("color", "#888888", "edge"),
                            c("dir", "forward", "edge"),
                            c("fillcolor", "#FFFFFF", "node"));
