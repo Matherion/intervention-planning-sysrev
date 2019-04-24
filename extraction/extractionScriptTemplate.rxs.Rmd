@@ -1,6 +1,6 @@
 ---
 title: "Systematic Review Extraction Script Template"
-date: "12 dec 2018 at 22:20:23"
+date: "24 apr 2019 at 19:20:55"
 output:
   html_document:
     self-contained: yes
@@ -855,8 +855,8 @@ study <- Node$new('study');
             study$methods$variables$interventions$intervention$populations$target[['value']] <-
             ####################################################################
             ### 
-            ### DEFINE TARGET POPULATION (WILL OFTEN BE THE
-            ### SAME AS THE AT-RISK POPULATION)
+            ### DEFINE TARGET POPULATION (CAN BE THE SAME AS
+            ### THE AT-RISK POPULATION)
             ### 
             ### Any description of the target population (the
             ### focal population of this intervention, e.g.
@@ -2159,7 +2159,7 @@ study <- Node$new('study');
               ### ASSESS AVAILABLE ENVIRONMENTAL ASSETS OF
               ### TARGET COMMUNITY
               ### 
-              ### A description of the ubiquity of each
+              ### A description of the presence of each
               ### available environmental asset.
               ### 
               ##################################################################
@@ -2401,8 +2401,9 @@ study <- Node$new('study');
             ### DECISION REGARDING EVALUATION
             ### 
             ### A decision to evaluate the goals, and either
-            ### the operationalisations, or a justification as
-            ### to why the program goals will not be evaluated.
+            ### the operationalisations have to be listed, or a
+            ### justification as to why the program goals will
+            ### not be evaluated.
             ### 
             ####################################################################
                 
@@ -2878,8 +2879,8 @@ study <- Node$new('study');
                   ### JUSTIFY PERFORMANCE
                   ### OBJECTIVE-BEHAVIOR(S) LINK(S)
                   ### 
-                  ### Any explanation of the causal (or
-                  ### constituent) relationship between
+                  ### Any explanation of the structural
+                  ### (or causal) relationship between
                   ### the performance objective(s) and
                   ### the desirable behavior(s)
                   ### 
@@ -2997,10 +2998,10 @@ study <- Node$new('study');
                 
                 
                   ##############################################################
-                  ################# START: recursion_desOutcome_PO_evalution ###
+                  ################ START: recursion_desOutcome_PO_evaluation ###
                   ##############################################################
-                  study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$AddChild('recursion_desOutcome_PO_evalution');
-                  study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_evalution[['value']] <-
+                  study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$AddChild('recursion_desOutcome_PO_evaluation');
+                  study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_evaluation[['value']] <-
                   ##############################################################
                   ### 
                   ### DECISION REGARDING EVALUATION
@@ -3025,9 +3026,9 @@ study <- Node$new('study');
 
                   ### 
                   ##############################################################
-                  study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_evalution[['validation']] <- expression();
+                  study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_evaluation[['validation']] <- expression();
                   ##############################################################
-                  ################### END: recursion_desOutcome_PO_evalution ###
+                  ################## END: recursion_desOutcome_PO_evaluation ###
                   ##############################################################
                 
                 
@@ -3803,10 +3804,12 @@ study <- Node$new('study');
                         study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_toApplic$recursion_desOutcome_det_methodInd_context[['value']] <-
                         ########################################################
                         ### 
-                        ### IN EACH APPLICATION,
-                        ### TAKE INTO ACCOUNT
-                        ### POPULATION, CULTURAL,
-                        ### AND CONTEXTUAL FACTORS
+                        ### IN EACH APPLICATION OF
+                        ### INDIVIDUAL-LEVEL
+                        ### METHODS, TAKE INTO
+                        ### ACCOUNT POPULATION,
+                        ### CULTURAL, AND
+                        ### CONTEXTUAL FACTORS
                         ### 
                         ### Any mention of taking
                         ### into account
@@ -4129,10 +4132,11 @@ study <- Node$new('study');
                       study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_toApplic$recursion_desOutcome_det_methodEnv_context[['value']] <-
                       ##########################################################
                       ### 
-                      ### IN EACH APPLICATION, TAKE
-                      ### INTO ACCOUNT POPULATION,
-                      ### CULTURAL, AND CONTEXTUAL
-                      ### FACTORS
+                      ### IN EACH APPLICATION OF
+                      ### ENVIRONMENTAL-LEVEL
+                      ### METHODS, TAKE INTO ACCOUNT
+                      ### POPULATION, CULTURAL, AND
+                      ### CONTEXTUAL FACTORS
                       ### 
                       ### Any mention of taking into
                       ### account population,
@@ -4913,6 +4917,8 @@ study <- Node$new('study');
                   ### EACH COMPONENT (E.G. SATISFACTION
                   ### OF THE PARAMETERS OF USE,
                   ### USABILITY, AND COMPREHENSION)
+                  ### 
+                  ### Any indication that this was done
                   ### 
                   ##############################################################
                       
@@ -6273,7 +6279,7 @@ class(study) <- c('rxs', class(study));
         ### 
         ### JUSTIFY PERFORMANCE OBJECTIVE-BEHAVIOR(S) LINK(S)
         ### 
-        ### Any explanation of the causal (or constituent)
+        ### Any explanation of the structural (or causal)
         ### relationship between the performance objective(s) and
         ### the desirable behavior(s)
         ### 
@@ -6381,10 +6387,10 @@ class(study) <- c('rxs', class(study));
       
       
         ########################################################################
-        ########################### START: recursion_desOutcome_PO_evalution ###
+        ########################## START: recursion_desOutcome_PO_evaluation ###
         ########################################################################
-        recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$AddChild('recursion_desOutcome_PO_evalution');
-        recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_evalution[['value']] <-
+        recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$AddChild('recursion_desOutcome_PO_evaluation');
+        recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_evaluation[['value']] <-
         ########################################################################
         ### 
         ### DECISION REGARDING EVALUATION
@@ -6406,9 +6412,9 @@ class(study) <- c('rxs', class(study));
 
         ### 
         ########################################################################
-        recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_evalution[['validation']] <- expression();
+        recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_evaluation[['validation']] <- expression();
         ########################################################################
-        ############################# END: recursion_desOutcome_PO_evalution ###
+        ############################ END: recursion_desOutcome_PO_evaluation ###
         ########################################################################
       
       
@@ -7079,9 +7085,9 @@ class(study) <- c('rxs', class(study));
               recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_toApplic$recursion_desOutcome_det_methodInd_context[['value']] <-
               ##################################################################
               ### 
-              ### IN EACH APPLICATION, TAKE INTO ACCOUNT
-              ### POPULATION, CULTURAL, AND CONTEXTUAL
-              ### FACTORS
+              ### IN EACH APPLICATION OF INDIVIDUAL-LEVEL
+              ### METHODS, TAKE INTO ACCOUNT POPULATION,
+              ### CULTURAL, AND CONTEXTUAL FACTORS
               ### 
               ### Any mention of taking into account
               ### population, cultural, and contextual
@@ -7356,8 +7362,9 @@ class(study) <- c('rxs', class(study));
             recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_toApplic$recursion_desOutcome_det_methodEnv_context[['value']] <-
             ####################################################################
             ### 
-            ### IN EACH APPLICATION, TAKE INTO ACCOUNT
-            ### POPULATION, CULTURAL, AND CONTEXTUAL FACTORS
+            ### IN EACH APPLICATION OF ENVIRONMENTAL-LEVEL
+            ### METHODS, TAKE INTO ACCOUNT POPULATION,
+            ### CULTURAL, AND CONTEXTUAL FACTORS
             ### 
             ### Any mention of taking into account population,
             ### cultural, and contextual factors.
