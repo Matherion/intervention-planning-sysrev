@@ -1,6 +1,6 @@
 ---
 title: "Systematic Review Extraction Script Template"
-date: "24 apr 2019 at 19:20:55"
+date: "18 okt 2019 at 14:02:06"
 output:
   html_document:
     self-contained: yes
@@ -928,22 +928,18 @@ study <- Node$new('study');
                   
               
                 ################################################################
-                ####################### START: atRiskPop_QOL_def (REPEATING) ###
+                ################################### START: atRiskPop_QOL_def ###
                 ################################################################
-                study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$atRiskPop_QOL$AddChild('atRiskPop_QOL_def__1__');
+                study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$atRiskPop_QOL$AddChild('atRiskPop_QOL_def');
                 study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$atRiskPop_QOL$atRiskPop_QOL_def[['value']] <-
                 ################################################################
                 ### 
                 ### DEFINE QUALITY OF LIFE OF AT-RISK
                 ### POPULATION
                 ### 
-                ### Description of the most relevant
+                ### Description of at least one relevant
                 ### variable(s) that comprise Quality of
                 ### Life for this at-risk population.
-                ### Extract these variables separately, so
-                ### that the descriptions of assessment and
-                ### links can be extracted separately as
-                ### well.
                 ### 
                 ################################################################
                     
@@ -954,21 +950,21 @@ study <- Node$new('study');
                 ################################################################
                 ### 
                 ### Whether this definition was provided.
-                ### Code NA if the definition was not
-                ### reported; 1 if this definition was
+                ### Code 1 if the definition was not
+                ### reported; 2 if this definition was
                 ### reported with unclear definitions of
-                ### the variables; 2 if this definition was
+                ### the variables; 3 if this definition was
                 ### reported with clear definitions of the
                 ### variables
                 ### 
                 ### EXAMPLE:
                 ### 
-                ### c(1, 2)
+                ### c(1, 2, 3)
                 ### 
                 ################################################################
-                study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$atRiskPop_QOL$atRiskPop_QOL_def[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2)));
+                study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$atRiskPop_QOL$atRiskPop_QOL_def[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
                 ################################################################
-                ######################### END: atRiskPop_QOL_def (REPEATING) ###
+                ##################################### END: atRiskPop_QOL_def ###
                 ################################################################
               
               
@@ -997,19 +993,19 @@ study <- Node$new('study');
                 ################################################################
                 ### 
                 ### Whether this was reported. Code 1 if
-                ### this was reported without
-                ### justification; code 2 if this was
-                ### reported and justified, but no source
-                ### was cited; code 3 if this was reported
-                ### and justified, and one or more sources
-                ### were cited.
+                ### this was not reported; 2 if this was
+                ### reported without justification; code 3
+                ### if this was reported and justified, but
+                ### no source was cited; code 4 if this was
+                ### reported and justified, and one or more
+                ### sources were cited.
                 ### 
                 ### EXAMPLE:
                 ### 
-                ### c(1, 2, 3)
+                ### c(1, 2, 3, 4)
                 ### 
                 ################################################################
-                study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$atRiskPop_QOL$atRiskPop_QOL_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$atRiskPop_QOL$atRiskPop_QOL_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                 ################################################################
                 ###################### END: atRiskPop_QOL_assess (REPEATING) ###
                 ################################################################
@@ -1054,19 +1050,19 @@ study <- Node$new('study');
                 ################################################################
                 ### 
                 ### Whether this definition was provided.
-                ### Code NA if the definition was not
-                ### reported; 1 if this definition was
+                ### Code 1 if the definition was not
+                ### reported; 2 if this definition was
                 ### reported with unclear definitions of
-                ### the variables; 2 if this definition was
+                ### the variables; 3 if this definition was
                 ### reported with clear definitions of the
                 ### variables
                 ### 
                 ### EXAMPLE:
                 ### 
-                ### c(1, 2)
+                ### c(1, 2, 3)
                 ### 
                 ################################################################
-                study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$atRiskPop_healthProb$atRiskPop_healthProb_def[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2)));
+                study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$atRiskPop_healthProb$atRiskPop_healthProb_def[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
                 ################################################################
                 ################## END: atRiskPop_healthProb_def (REPEATING) ###
                 ################################################################
@@ -1096,19 +1092,19 @@ study <- Node$new('study');
                 ################################################################
                 ### 
                 ### Whether this was reported. Code 1 if
-                ### this was reported without
-                ### justification; code 2 if this was
-                ### reported and justified, but no source
-                ### was cited; code 3 if this was reported
-                ### and justified, and one or more sources
-                ### were cited.
+                ### this was not reported; 2 if this was
+                ### reported without justification; code 3
+                ### if this was reported and justified, but
+                ### no source was cited; code 4 if this was
+                ### reported and justified, and one or more
+                ### sources were cited.
                 ### 
                 ### EXAMPLE:
                 ### 
-                ### c(1, 2, 3)
+                ### c(1, 2, 3, 4)
                 ### 
                 ################################################################
-                study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$atRiskPop_healthProb$atRiskPop_healthProb_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$atRiskPop_healthProb$atRiskPop_healthProb_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                 ################################################################
                 ############### END: atRiskPop_healthProb_assess (REPEATING) ###
                 ################################################################
@@ -1196,19 +1192,19 @@ study <- Node$new('study');
                 ################################################################
                 ### 
                 ### Whether this was reported. Code 1 if
-                ### this was reported without
-                ### justification; code 2 if this was
-                ### reported and justified, but no source
-                ### was cited; code 3 if this was reported
-                ### and justified, and one or more sources
-                ### were cited.
+                ### this was not reported; 2 if this was
+                ### reported without justification; code 3
+                ### if this was reported and justified, but
+                ### no source was cited; code 4 if this was
+                ### reported and justified, and one or more
+                ### sources were cited.
                 ### 
                 ### EXAMPLE:
                 ### 
-                ### c(1, 2, 3)
+                ### c(1, 2, 3, 4)
                 ### 
                 ################################################################
-                study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$targetPop_undBeh$targetPop_undBeh_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$targetPop_undBeh$targetPop_undBeh_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                 ################################################################
                 ################### END: targetPop_undBeh_assess (REPEATING) ###
                 ################################################################
@@ -1308,19 +1304,20 @@ study <- Node$new('study');
                   ##############################################################
                   ### 
                   ### Whether this was reported. Code 1
-                  ### if this was reported without
-                  ### justification; code 2 if this was
-                  ### reported and justified, but no
-                  ### source was cited; code 3 if this
-                  ### was reported and justified, and one
-                  ### or more sources were cited.
+                  ### if this was not reported; 2 if this
+                  ### was reported without justification;
+                  ### code 3 if this was reported and
+                  ### justified, but no source was cited;
+                  ### code 4 if this was reported and
+                  ### justified, and one or more sources
+                  ### were cited.
                   ### 
                   ### EXAMPLE:
                   ### 
-                  ### c(1, 2, 3)
+                  ### c(1, 2, 3, 4)
                   ### 
                   ##############################################################
-                  study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$envFact$atRiskPop_envFact_healthProb$atRiskPop_envFact_healthProb_agent[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                  study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$envFact$atRiskPop_envFact_healthProb$atRiskPop_envFact_healthProb_agent[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                   ##############################################################
                   ###### END: atRiskPop_envFact_healthProb_agent (REPEATING) ###
                   ##############################################################
@@ -1355,19 +1352,20 @@ study <- Node$new('study');
                   ##############################################################
                   ### 
                   ### Whether this was reported. Code 1
-                  ### if this was reported without
-                  ### justification; code 2 if this was
-                  ### reported and justified, but no
-                  ### source was cited; code 3 if this
-                  ### was reported and justified, and one
-                  ### or more sources were cited.
+                  ### if this was not reported; 2 if this
+                  ### was reported without justification;
+                  ### code 3 if this was reported and
+                  ### justified, but no source was cited;
+                  ### code 4 if this was reported and
+                  ### justified, and one or more sources
+                  ### were cited.
                   ### 
                   ### EXAMPLE:
                   ### 
-                  ### c(1, 2, 3)
+                  ### c(1, 2, 3, 4)
                   ### 
                   ##############################################################
-                  study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$envFact$atRiskPop_envFact_healthProb$atRiskPop_envFact_healthProb_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                  study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$envFact$atRiskPop_envFact_healthProb$atRiskPop_envFact_healthProb_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                   ##############################################################
                   ##### END: atRiskPop_envFact_healthProb_assess (REPEATING) ###
                   ##############################################################
@@ -1455,19 +1453,20 @@ study <- Node$new('study');
                   ##############################################################
                   ### 
                   ### Whether this was reported. Code 1
-                  ### if this was reported without
-                  ### justification; code 2 if this was
-                  ### reported and justified, but no
-                  ### source was cited; code 3 if this
-                  ### was reported and justified, and one
-                  ### or more sources were cited.
+                  ### if this was not reported; 2 if this
+                  ### was reported without justification;
+                  ### code 3 if this was reported and
+                  ### justified, but no source was cited;
+                  ### code 4 if this was reported and
+                  ### justified, and one or more sources
+                  ### were cited.
                   ### 
                   ### EXAMPLE:
                   ### 
-                  ### c(1, 2, 3)
+                  ### c(1, 2, 3, 4)
                   ### 
                   ##############################################################
-                  study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$envFact$atRiskPop_envFact_QOL$atRiskPop_envFact_QOL_agent[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                  study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$envFact$atRiskPop_envFact_QOL$atRiskPop_envFact_QOL_agent[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                   ##############################################################
                   ############# END: atRiskPop_envFact_QOL_agent (REPEATING) ###
                   ##############################################################
@@ -1502,19 +1501,20 @@ study <- Node$new('study');
                   ##############################################################
                   ### 
                   ### Whether this was reported. Code 1
-                  ### if this was reported without
-                  ### justification; code 2 if this was
-                  ### reported and justified, but no
-                  ### source was cited; code 3 if this
-                  ### was reported and justified, and one
-                  ### or more sources were cited.
+                  ### if this was not reported; 2 if this
+                  ### was reported without justification;
+                  ### code 3 if this was reported and
+                  ### justified, but no source was cited;
+                  ### code 4 if this was reported and
+                  ### justified, and one or more sources
+                  ### were cited.
                   ### 
                   ### EXAMPLE:
                   ### 
-                  ### c(1, 2, 3)
+                  ### c(1, 2, 3, 4)
                   ### 
                   ##############################################################
-                  study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$envFact$atRiskPop_envFact_QOL$atRiskPop_envFact_QOL_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                  study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$envFact$atRiskPop_envFact_QOL$atRiskPop_envFact_QOL_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                   ##############################################################
                   ############ END: atRiskPop_envFact_QOL_assess (REPEATING) ###
                   ##############################################################
@@ -1605,19 +1605,20 @@ study <- Node$new('study');
                   ##############################################################
                   ### 
                   ### Whether this was reported. Code 1
-                  ### if this was reported without
-                  ### justification; code 2 if this was
-                  ### reported and justified, but no
-                  ### source was cited; code 3 if this
-                  ### was reported and justified, and one
-                  ### or more sources were cited.
+                  ### if this was not reported; 2 if this
+                  ### was reported without justification;
+                  ### code 3 if this was reported and
+                  ### justified, but no source was cited;
+                  ### code 4 if this was reported and
+                  ### justified, and one or more sources
+                  ### were cited.
                   ### 
                   ### EXAMPLE:
                   ### 
-                  ### c(1, 2, 3)
+                  ### c(1, 2, 3, 4)
                   ### 
                   ##############################################################
-                  study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$envFact$targetPop_envFact_undBeh$targetPop_envFact_undBeh_agent[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                  study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$envFact$targetPop_envFact_undBeh$targetPop_envFact_undBeh_agent[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                   ##############################################################
                   ########## END: targetPop_envFact_undBeh_agent (REPEATING) ###
                   ##############################################################
@@ -1653,19 +1654,20 @@ study <- Node$new('study');
                   ##############################################################
                   ### 
                   ### Whether this was reported. Code 1
-                  ### if this was reported without
-                  ### justification; code 2 if this was
-                  ### reported and justified, but no
-                  ### source was cited; code 3 if this
-                  ### was reported and justified, and one
-                  ### or more sources were cited.
+                  ### if this was not reported; 2 if this
+                  ### was reported without justification;
+                  ### code 3 if this was reported and
+                  ### justified, but no source was cited;
+                  ### code 4 if this was reported and
+                  ### justified, and one or more sources
+                  ### were cited.
                   ### 
                   ### EXAMPLE:
                   ### 
-                  ### c(1, 2, 3)
+                  ### c(1, 2, 3, 4)
                   ### 
                   ##############################################################
-                  study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$envFact$targetPop_envFact_undBeh$targetPop_envFact_undBeh_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                  study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_vars$envFact$targetPop_envFact_undBeh$targetPop_envFact_undBeh_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                   ##############################################################
                   ######### END: targetPop_envFact_undBeh_assess (REPEATING) ###
                   ##############################################################
@@ -1722,18 +1724,19 @@ study <- Node$new('study');
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_links$healthProblem_QOL_link_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_links$healthProblem_QOL_link_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               ############### END: healthProblem_QOL_link_justif (REPEATING) ###
               ##################################################################
@@ -1763,18 +1766,19 @@ study <- Node$new('study');
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_links$undBeh_healthProb_link_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_links$undBeh_healthProb_link_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               ############### END: undBeh_healthProb_link_justif (REPEATING) ###
               ##################################################################
@@ -1804,18 +1808,19 @@ study <- Node$new('study');
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_links$undBeh_QOL_link_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_links$undBeh_QOL_link_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               ###################### END: undBeh_QOL_link_justif (REPEATING) ###
               ##################################################################
@@ -1846,18 +1851,19 @@ study <- Node$new('study');
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_links$atRiskPop_envFact_healthProb_link_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_links$atRiskPop_envFact_healthProb_link_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               #### END: atRiskPop_envFact_healthProb_link_justif (REPEATING) ###
               ##################################################################
@@ -1888,18 +1894,19 @@ study <- Node$new('study');
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_links$targetPop_envFact_undBeh_link_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_links$targetPop_envFact_undBeh_link_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               ######## END: targetPop_envFact_undBeh_link_justif (REPEATING) ###
               ##################################################################
@@ -1929,18 +1936,19 @@ study <- Node$new('study');
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_links$atRiskPop_envFact_QOL_link_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              study$methods$variables$interventions$intervention$problemLogicModel$problemLogicModel_links$atRiskPop_envFact_QOL_link_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               ########### END: atRiskPop_envFact_QOL_link_justif (REPEATING) ###
               ##################################################################
@@ -2076,18 +2084,19 @@ study <- Node$new('study');
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              study$methods$variables$interventions$intervention$communityCapacity$communityCapacity_capacity$communityCapacity_capacity_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              study$methods$variables$interventions$intervention$communityCapacity$communityCapacity_capacity$communityCapacity_capacity_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               ########### END: communityCapacity_capacity_assess (REPEATING) ###
               ##################################################################
@@ -2171,18 +2180,19 @@ study <- Node$new('study');
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              study$methods$variables$interventions$intervention$communityCapacity$communityCapacity_envAssets$communityCapacity_envAssets_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              study$methods$variables$interventions$intervention$communityCapacity$communityCapacity_envAssets$communityCapacity_envAssets_assess[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               ########## END: communityCapacity_envAssets_assess (REPEATING) ###
               ##################################################################
@@ -2210,9 +2220,9 @@ study <- Node$new('study');
               
           
             ####################################################################
-            ############################ START: programGoals_def (REPEATING) ###
+            ######################################## START: programGoals_def ###
             ####################################################################
-            study$methods$variables$interventions$intervention$programGoals$AddChild('programGoals_def__1__');
+            study$methods$variables$interventions$intervention$programGoals$AddChild('programGoals_def');
             study$methods$variables$interventions$intervention$programGoals$programGoals_def[['value']] <-
             ####################################################################
             ### 
@@ -2231,9 +2241,9 @@ study <- Node$new('study');
             ################################# VALUE DESCRIPTION AND EXAMPLES ###
             ####################################################################
             ### 
-            ### Whether this task was completed. Code NA if
-            ### this was not reported; 1 if this was reported
-            ### or present.
+            ### Whether this task was completed. Code 1 if this
+            ### was not reported; 2 if this was reported or
+            ### present.
             ### 
             ### EXAMPLE:
             ### 
@@ -2242,14 +2252,14 @@ study <- Node$new('study');
             ####################################################################
             study$methods$variables$interventions$intervention$programGoals$programGoals_def[['validation']] <- expression(is.na(VALUE) || (VALUE %in% 1));
             ####################################################################
-            ############################## END: programGoals_def (REPEATING) ###
+            ########################################## END: programGoals_def ###
             ####################################################################
           
           
             ####################################################################
-            ######################### START: programGoals_justif (REPEATING) ###
+            ##################################### START: programGoals_justif ###
             ####################################################################
-            study$methods$variables$interventions$intervention$programGoals$AddChild('programGoals_justif__1__');
+            study$methods$variables$interventions$intervention$programGoals$AddChild('programGoals_justif');
             study$methods$variables$interventions$intervention$programGoals$programGoals_justif[['value']] <-
             ####################################################################
             ### 
@@ -2267,26 +2277,27 @@ study <- Node$new('study');
             ####################################################################
             ### 
             ### Whether this was reported. Code 1 if this was
-            ### reported without justification; code 2 if this
-            ### was reported and justified, but no source was
-            ### cited; code 3 if this was reported and
-            ### justified, and one or more sources were cited.
+            ### not reported; 2 if this was reported without
+            ### justification; code 3 if this was reported and
+            ### justified, but no source was cited; code 4 if
+            ### this was reported and justified, and one or
+            ### more sources were cited.
             ### 
             ### EXAMPLE:
             ### 
-            ### c(1, 2, 3)
+            ### c(1, 2, 3, 4)
             ### 
             ####################################################################
-            study$methods$variables$interventions$intervention$programGoals$programGoals_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+            study$methods$variables$interventions$intervention$programGoals$programGoals_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
             ####################################################################
-            ########################### END: programGoals_justif (REPEATING) ###
+            ####################################### END: programGoals_justif ###
             ####################################################################
           
           
             ####################################################################
-            #################### START: programGoals_areSpecific (REPEATING) ###
+            ################################ START: programGoals_areSpecific ###
             ####################################################################
-            study$methods$variables$interventions$intervention$programGoals$AddChild('programGoals_areSpecific__1__');
+            study$methods$variables$interventions$intervention$programGoals$AddChild('programGoals_areSpecific');
             study$methods$variables$interventions$intervention$programGoals$programGoals_areSpecific[['value']] <-
             ####################################################################
             ### 
@@ -2304,9 +2315,9 @@ study <- Node$new('study');
             ################################# VALUE DESCRIPTION AND EXAMPLES ###
             ####################################################################
             ### 
-            ### Whether this task was completed. Code NA if
-            ### this was not reported; 1 if this was reported
-            ### or present.
+            ### Whether this task was completed. Code 1 if this
+            ### was not reported; 2 if this was reported or
+            ### present.
             ### 
             ### EXAMPLE:
             ### 
@@ -2315,14 +2326,14 @@ study <- Node$new('study');
             ####################################################################
             study$methods$variables$interventions$intervention$programGoals$programGoals_areSpecific[['validation']] <- expression(is.na(VALUE) || (VALUE %in% 1));
             ####################################################################
-            ###################### END: programGoals_areSpecific (REPEATING) ###
+            ################################## END: programGoals_areSpecific ###
             ####################################################################
           
           
             ####################################################################
-            ################## START: programGoals_areMeasurable (REPEATING) ###
+            ############################## START: programGoals_areMeasurable ###
             ####################################################################
-            study$methods$variables$interventions$intervention$programGoals$AddChild('programGoals_areMeasurable__1__');
+            study$methods$variables$interventions$intervention$programGoals$AddChild('programGoals_areMeasurable');
             study$methods$variables$interventions$intervention$programGoals$programGoals_areMeasurable[['value']] <-
             ####################################################################
             ### 
@@ -2340,9 +2351,9 @@ study <- Node$new('study');
             ################################# VALUE DESCRIPTION AND EXAMPLES ###
             ####################################################################
             ### 
-            ### Whether this task was completed. Code NA if
-            ### this was not reported; 1 if this was reported
-            ### or present.
+            ### Whether this task was completed. Code 1 if this
+            ### was not reported; 2 if this was reported or
+            ### present.
             ### 
             ### EXAMPLE:
             ### 
@@ -2351,14 +2362,14 @@ study <- Node$new('study');
             ####################################################################
             study$methods$variables$interventions$intervention$programGoals$programGoals_areMeasurable[['validation']] <- expression(is.na(VALUE) || (VALUE %in% 1));
             ####################################################################
-            #################### END: programGoals_areMeasurable (REPEATING) ###
+            ################################ END: programGoals_areMeasurable ###
             ####################################################################
           
           
             ####################################################################
-            #################### START: programGoals_areTempSpec (REPEATING) ###
+            ################################ START: programGoals_areTempSpec ###
             ####################################################################
-            study$methods$variables$interventions$intervention$programGoals$AddChild('programGoals_areTempSpec__1__');
+            study$methods$variables$interventions$intervention$programGoals$AddChild('programGoals_areTempSpec');
             study$methods$variables$interventions$intervention$programGoals$programGoals_areTempSpec[['value']] <-
             ####################################################################
             ### 
@@ -2376,9 +2387,9 @@ study <- Node$new('study');
             ################################# VALUE DESCRIPTION AND EXAMPLES ###
             ####################################################################
             ### 
-            ### Whether this task was completed. Code NA if
-            ### this was not reported; 1 if this was reported
-            ### or present.
+            ### Whether this task was completed. Code 1 if this
+            ### was not reported; 2 if this was reported or
+            ### present.
             ### 
             ### EXAMPLE:
             ### 
@@ -2387,14 +2398,14 @@ study <- Node$new('study');
             ####################################################################
             study$methods$variables$interventions$intervention$programGoals$programGoals_areTempSpec[['validation']] <- expression(is.na(VALUE) || (VALUE %in% 1));
             ####################################################################
-            ###################### END: programGoals_areTempSpec (REPEATING) ###
+            ################################## END: programGoals_areTempSpec ###
             ####################################################################
           
           
             ####################################################################
-            ########################### START: programGoals_eval (REPEATING) ###
+            ####################################### START: programGoals_eval ###
             ####################################################################
-            study$methods$variables$interventions$intervention$programGoals$AddChild('programGoals_eval__1__');
+            study$methods$variables$interventions$intervention$programGoals$AddChild('programGoals_eval');
             study$methods$variables$interventions$intervention$programGoals$programGoals_eval[['value']] <-
             ####################################################################
             ### 
@@ -2413,9 +2424,9 @@ study <- Node$new('study');
             ################################# VALUE DESCRIPTION AND EXAMPLES ###
             ####################################################################
             ### 
-            ### Whether this task was completed. Code NA if
-            ### this was not reported; 1 if this was reported
-            ### or present.
+            ### Whether this task was completed. Code 1 if this
+            ### was not reported; 2 if this was reported or
+            ### present.
             ### 
             ### EXAMPLE:
             ### 
@@ -2424,7 +2435,7 @@ study <- Node$new('study');
             ####################################################################
             study$methods$variables$interventions$intervention$programGoals$programGoals_eval[['validation']] <- expression(is.na(VALUE) || (VALUE %in% 1));
             ####################################################################
-            ############################# END: programGoals_eval (REPEATING) ###
+            ######################################### END: programGoals_eval ###
             ####################################################################
           
               
@@ -2480,8 +2491,8 @@ study <- Node$new('study');
               ############################### VALUE DESCRIPTION AND EXAMPLES ###
               ##################################################################
               ### 
-              ### Whether this task was completed. Code NA if
-              ### this was not reported; 1 if this was
+              ### Whether this task was completed. Code 1 if
+              ### this was not reported; 2 if this was
               ### reported or present.
               ### 
               ### EXAMPLE:
@@ -2521,18 +2532,19 @@ study <- Node$new('study');
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               ################# END: recursion_desOutcome_justif (REPEATING) ###
               ##################################################################
@@ -2570,9 +2582,9 @@ study <- Node$new('study');
                 ############################# VALUE DESCRIPTION AND EXAMPLES ###
                 ################################################################
                 ### 
-                ### Whether this task was completed. Code
-                ### NA if this was not reported; 1 if this
-                ### was reported or present.
+                ### Whether this task was completed. Code 1
+                ### if this was not reported; 2 if this was
+                ### reported or present.
                 ### 
                 ### EXAMPLE:
                 ### 
@@ -2600,12 +2612,10 @@ study <- Node$new('study');
               ### DESIRABLE OUTCOME: SELECT
               ### 
               ### Any description of the justification for
-              ### the selection of
-              ### environmental/implementation outcomes or
-              ### agents on the basis of relevance and
-              ### changeability (note: can be empty for the
-              ### main intervention outcome, which is
-              ### implicitly selected)
+              ### the selection of individual
+              ### level/environmental level/implementation
+              ### outcomes or agents on the basis of
+              ### relevance and changeability.
               ### 
               ##################################################################
                   
@@ -2615,8 +2625,8 @@ study <- Node$new('study');
               ############################### VALUE DESCRIPTION AND EXAMPLES ###
               ##################################################################
               ### 
-              ### Whether this task was completed. Code NA if
-              ### this was not reported; 1 if this was
+              ### Whether this task was completed. Code 1 if
+              ### this was not reported; 2 if this was
               ### reported or present.
               ### 
               ### EXAMPLE:
@@ -2723,9 +2733,9 @@ study <- Node$new('study');
                 ############################# VALUE DESCRIPTION AND EXAMPLES ###
                 ################################################################
                 ### 
-                ### Whether this task was completed. Code
-                ### NA if this was not reported; 1 if this
-                ### was reported or present.
+                ### Whether this task was completed. Code 1
+                ### if this was not reported; 2 if this was
+                ### reported or present.
                 ### 
                 ### EXAMPLE:
                 ### 
@@ -2765,19 +2775,19 @@ study <- Node$new('study');
                 ################################################################
                 ### 
                 ### Whether this was reported. Code 1 if
-                ### this was reported without
-                ### justification; code 2 if this was
-                ### reported and justified, but no source
-                ### was cited; code 3 if this was reported
-                ### and justified, and one or more sources
-                ### were cited.
+                ### this was not reported; 2 if this was
+                ### reported without justification; code 3
+                ### if this was reported and justified, but
+                ### no source was cited; code 4 if this was
+                ### reported and justified, and one or more
+                ### sources were cited.
                 ### 
                 ### EXAMPLE:
                 ### 
-                ### c(1, 2, 3)
+                ### c(1, 2, 3, 4)
                 ### 
                 ################################################################
-                study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_desBeh_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_desBeh_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                 ################################################################
                 #################### END: recursion_desOutcome_desBeh_justif ###
                 ################################################################
@@ -2855,7 +2865,7 @@ study <- Node$new('study');
                   ##############################################################
                   ### 
                   ### Whether this task was completed.
-                  ### Code NA if this was not reported; 1
+                  ### Code 1 if this was not reported; 2
                   ### if this was reported or present.
                   ### 
                   ### EXAMPLE:
@@ -2893,19 +2903,20 @@ study <- Node$new('study');
                   ##############################################################
                   ### 
                   ### Whether this was reported. Code 1
-                  ### if this was reported without
-                  ### justification; code 2 if this was
-                  ### reported and justified, but no
-                  ### source was cited; code 3 if this
-                  ### was reported and justified, and one
-                  ### or more sources were cited.
+                  ### if this was not reported; 2 if this
+                  ### was reported without justification;
+                  ### code 3 if this was reported and
+                  ### justified, but no source was cited;
+                  ### code 4 if this was reported and
+                  ### justified, and one or more sources
+                  ### were cited.
                   ### 
                   ### EXAMPLE:
                   ### 
-                  ### c(1, 2, 3)
+                  ### c(1, 2, 3, 4)
                   ### 
                   ##############################################################
-                  study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                  study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                   ##############################################################
                   ########## END: recursion_desOutcome_PO_justif (REPEATING) ###
                   ##############################################################
@@ -2936,19 +2947,20 @@ study <- Node$new('study');
                   ##############################################################
                   ### 
                   ### Whether this was reported. Code 1
-                  ### if this was reported without
-                  ### justification; code 2 if this was
-                  ### reported and justified, but no
-                  ### source was cited; code 3 if this
-                  ### was reported and justified, and one
-                  ### or more sources were cited.
+                  ### if this was not reported; 2 if this
+                  ### was reported without justification;
+                  ### code 3 if this was reported and
+                  ### justified, but no source was cited;
+                  ### code 4 if this was reported and
+                  ### justified, and one or more sources
+                  ### were cited.
                   ### 
                   ### EXAMPLE:
                   ### 
-                  ### c(1, 2, 3)
+                  ### c(1, 2, 3, 4)
                   ### 
                   ##############################################################
-                  study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_select[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                  study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_select[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                   ##############################################################
                   ###################### END: recursion_desOutcome_PO_select ###
                   ##############################################################
@@ -3132,8 +3144,8 @@ study <- Node$new('study');
                     ############################################################
                     ### 
                     ### Whether this task was
-                    ### completed. Code NA if this was
-                    ### not reported; 1 if this was
+                    ### completed. Code 1 if this was
+                    ### not reported; 2 if this was
                     ### reported or present.
                     ### 
                     ### EXAMPLE:
@@ -3172,20 +3184,21 @@ study <- Node$new('study');
                     ############################################################
                     ### 
                     ### Whether this was reported. Code
-                    ### 1 if this was reported without
-                    ### justification; code 2 if this
+                    ### 1 if this was not reported; 2
+                    ### if this was reported without
+                    ### justification; code 3 if this
                     ### was reported and justified, but
-                    ### no source was cited; code 3 if
+                    ### no source was cited; code 4 if
                     ### this was reported and
                     ### justified, and one or more
                     ### sources were cited.
                     ### 
                     ### EXAMPLE:
                     ### 
-                    ### c(1, 2, 3)
+                    ### c(1, 2, 3, 4)
                     ### 
                     ############################################################
-                    study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                    study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                     ############################################################
                     ####### END: recursion_desOutcome_det_justif (REPEATING) ###
                     ############################################################
@@ -3216,20 +3229,21 @@ study <- Node$new('study');
                     ############################################################
                     ### 
                     ### Whether this was reported. Code
-                    ### 1 if this was reported without
-                    ### justification; code 2 if this
+                    ### 1 if this was not reported; 2
+                    ### if this was reported without
+                    ### justification; code 3 if this
                     ### was reported and justified, but
-                    ### no source was cited; code 3 if
+                    ### no source was cited; code 4 if
                     ### this was reported and
                     ### justified, and one or more
                     ### sources were cited.
                     ### 
                     ### EXAMPLE:
                     ### 
-                    ### c(1, 2, 3)
+                    ### c(1, 2, 3, 4)
                     ### 
                     ############################################################
-                    study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_select[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                    study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_select[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                     ############################################################
                     ################### END: recursion_desOutcome_det_select ###
                     ############################################################
@@ -3352,8 +3366,8 @@ study <- Node$new('study');
                       ##########################################################
                       ### 
                       ### Whether this task was
-                      ### completed. Code NA if this
-                      ### was not reported; 1 if this
+                      ### completed. Code 1 if this
+                      ### was not reported; 2 if this
                       ### was reported or present.
                       ### 
                       ### EXAMPLE:
@@ -3393,21 +3407,23 @@ study <- Node$new('study');
                       ##########################################################
                       ### 
                       ### Whether this was reported.
-                      ### Code 1 if this was reported
-                      ### without justification; code
-                      ### 2 if this was reported and
+                      ### Code 1 if this was not
+                      ### reported; 2 if this was
+                      ### reported without
+                      ### justification; code 3 if
+                      ### this was reported and
                       ### justified, but no source
-                      ### was cited; code 3 if this
+                      ### was cited; code 4 if this
                       ### was reported and justified,
                       ### and one or more sources
                       ### were cited.
                       ### 
                       ### EXAMPLE:
                       ### 
-                      ### c(1, 2, 3)
+                      ### c(1, 2, 3, 4)
                       ### 
                       ##########################################################
-                      study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_subdet$recursion_desOutcome_subdet_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                      study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_subdet$recursion_desOutcome_subdet_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                       ##########################################################
                       ## END: recursion_desOutcome_subdet_justif (REPEATING) ###
                       ##########################################################
@@ -3437,8 +3453,8 @@ study <- Node$new('study');
                       ##########################################################
                       ### 
                       ### Whether this task was
-                      ### completed. Code NA if this
-                      ### was not reported; 1 if this
+                      ### completed. Code 1 if this
+                      ### was not reported; 2 if this
                       ### was reported or present.
                       ### 
                       ### EXAMPLE:
@@ -3576,8 +3592,8 @@ study <- Node$new('study');
                       ##########################################################
                       ### 
                       ### Whether this task was
-                      ### completed. Code NA if this
-                      ### was not reported; 1 if this
+                      ### completed. Code 1 if this
+                      ### was not reported; 2 if this
                       ### was reported or present.
                       ### 
                       ### EXAMPLE:
@@ -3614,8 +3630,8 @@ study <- Node$new('study');
                       ##########################################################
                       ### 
                       ### Whether this task was
-                      ### completed. Code NA if this
-                      ### was not reported; 1 if this
+                      ### completed. Code 1 if this
+                      ### was not reported; 2 if this
                       ### was reported or present.
                       ### 
                       ### EXAMPLE:
@@ -3676,21 +3692,23 @@ study <- Node$new('study');
                       ##########################################################
                       ### 
                       ### Whether this was reported.
-                      ### Code 1 if this was reported
-                      ### without justification; code
-                      ### 2 if this was reported and
+                      ### Code 1 if this was not
+                      ### reported; 2 if this was
+                      ### reported without
+                      ### justification; code 3 if
+                      ### this was reported and
                       ### justified, but no source
-                      ### was cited; code 3 if this
+                      ### was cited; code 4 if this
                       ### was reported and justified,
                       ### and one or more sources
                       ### were cited.
                       ### 
                       ### EXAMPLE:
                       ### 
-                      ### c(1, 2, 3)
+                      ### c(1, 2, 3, 4)
                       ### 
                       ##########################################################
-                      study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_selected[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                      study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_selected[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                       ##########################################################
                       # END: recursion_desOutcome_det_methodInd_selected (REPEATING) ###
                       ##########################################################
@@ -3722,21 +3740,23 @@ study <- Node$new('study');
                       ##########################################################
                       ### 
                       ### Whether this was reported.
-                      ### Code 1 if this was reported
-                      ### without justification; code
-                      ### 2 if this was reported and
+                      ### Code 1 if this was not
+                      ### reported; 2 if this was
+                      ### reported without
+                      ### justification; code 3 if
+                      ### this was reported and
                       ### justified, but no source
-                      ### was cited; code 3 if this
+                      ### was cited; code 4 if this
                       ### was reported and justified,
                       ### and one or more sources
                       ### were cited.
                       ### 
                       ### EXAMPLE:
                       ### 
-                      ### c(1, 2, 3)
+                      ### c(1, 2, 3, 4)
                       ### 
                       ##########################################################
-                      study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                      study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                       ##########################################################
                       # END: recursion_desOutcome_det_methodInd_justif (REPEATING) ###
                       ##########################################################
@@ -3781,9 +3801,9 @@ study <- Node$new('study');
                         ########################################################
                         ### 
                         ### Whether this task was
-                        ### completed. Code NA if
+                        ### completed. Code 1 if
                         ### this was not reported;
-                        ### 1 if this was reported
+                        ### 2 if this was reported
                         ### or present.
                         ### 
                         ### EXAMPLE:
@@ -3826,12 +3846,13 @@ study <- Node$new('study');
                         ### 
                         ### Whether this was
                         ### reported. Code 1 if
-                        ### this was reported
+                        ### this was not reported;
+                        ### 2 if this was reported
                         ### without justification;
-                        ### code 2 if this was
+                        ### code 3 if this was
                         ### reported and justified,
                         ### but no source was
-                        ### cited; code 3 if this
+                        ### cited; code 4 if this
                         ### was reported and
                         ### justified, and one or
                         ### more sources were
@@ -3839,10 +3860,10 @@ study <- Node$new('study');
                         ### 
                         ### EXAMPLE:
                         ### 
-                        ### c(1, 2, 3)
+                        ### c(1, 2, 3, 4)
                         ### 
                         ########################################################
-                        study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_toApplic$recursion_desOutcome_det_methodInd_context[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                        study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_toApplic$recursion_desOutcome_det_methodInd_context[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                         ########################################################
                         # END: recursion_desOutcome_det_methodInd_context (REPEATING) ###
                         ########################################################
@@ -3875,12 +3896,13 @@ study <- Node$new('study');
                         ### 
                         ### Whether this was
                         ### reported. Code 1 if
-                        ### this was reported
+                        ### this was not reported;
+                        ### 2 if this was reported
                         ### without justification;
-                        ### code 2 if this was
+                        ### code 3 if this was
                         ### reported and justified,
                         ### but no source was
-                        ### cited; code 3 if this
+                        ### cited; code 4 if this
                         ### was reported and
                         ### justified, and one or
                         ### more sources were
@@ -3888,10 +3910,10 @@ study <- Node$new('study');
                         ### 
                         ### EXAMPLE:
                         ### 
-                        ### c(1, 2, 3)
+                        ### c(1, 2, 3, 4)
                         ### 
                         ########################################################
-                        study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_toApplic$recursion_desOutcome_det_methodInd_params_list[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                        study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_toApplic$recursion_desOutcome_det_methodInd_params_list[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                         ########################################################
                         # END: recursion_desOutcome_det_methodInd_params_list (REPEATING) ###
                         ########################################################
@@ -3927,12 +3949,13 @@ study <- Node$new('study');
                         ### 
                         ### Whether this was
                         ### reported. Code 1 if
-                        ### this was reported
+                        ### this was not reported;
+                        ### 2 if this was reported
                         ### without justification;
-                        ### code 2 if this was
+                        ### code 3 if this was
                         ### reported and justified,
                         ### but no source was
-                        ### cited; code 3 if this
+                        ### cited; code 4 if this
                         ### was reported and
                         ### justified, and one or
                         ### more sources were
@@ -3940,10 +3963,10 @@ study <- Node$new('study');
                         ### 
                         ### EXAMPLE:
                         ### 
-                        ### c(1, 2, 3)
+                        ### c(1, 2, 3, 4)
                         ### 
                         ########################################################
-                        study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_toApplic$recursion_desOutcome_det_methodInd_params_apply[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                        study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_toApplic$recursion_desOutcome_det_methodInd_params_apply[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                         ########################################################
                         # END: recursion_desOutcome_det_methodInd_params_apply (REPEATING) ###
                         ########################################################
@@ -4004,20 +4027,21 @@ study <- Node$new('study');
                     ############################################################
                     ### 
                     ### Whether this was reported. Code
-                    ### 1 if this was reported without
-                    ### justification; code 2 if this
+                    ### 1 if this was not reported; 2
+                    ### if this was reported without
+                    ### justification; code 3 if this
                     ### was reported and justified, but
-                    ### no source was cited; code 3 if
+                    ### no source was cited; code 4 if
                     ### this was reported and
                     ### justified, and one or more
                     ### sources were cited.
                     ### 
                     ### EXAMPLE:
                     ### 
-                    ### c(1, 2, 3)
+                    ### c(1, 2, 3, 4)
                     ### 
                     ############################################################
-                    study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_selected[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                    study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_selected[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                     ############################################################
                     # END: recursion_desOutcome_det_methodEnv_selected (REPEATING) ###
                     ############################################################
@@ -4052,20 +4076,21 @@ study <- Node$new('study');
                     ############################################################
                     ### 
                     ### Whether this was reported. Code
-                    ### 1 if this was reported without
-                    ### justification; code 2 if this
+                    ### 1 if this was not reported; 2
+                    ### if this was reported without
+                    ### justification; code 3 if this
                     ### was reported and justified, but
-                    ### no source was cited; code 3 if
+                    ### no source was cited; code 4 if
                     ### this was reported and
                     ### justified, and one or more
                     ### sources were cited.
                     ### 
                     ### EXAMPLE:
                     ### 
-                    ### c(1, 2, 3)
+                    ### c(1, 2, 3, 4)
                     ### 
                     ############################################################
-                    study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                    study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                     ############################################################
                     # END: recursion_desOutcome_det_methodEnv_justif (REPEATING) ###
                     ############################################################
@@ -4110,8 +4135,8 @@ study <- Node$new('study');
                       ##########################################################
                       ### 
                       ### Whether this task was
-                      ### completed. Code NA if this
-                      ### was not reported; 1 if this
+                      ### completed. Code 1 if this
+                      ### was not reported; 2 if this
                       ### was reported or present.
                       ### 
                       ### EXAMPLE:
@@ -4152,21 +4177,23 @@ study <- Node$new('study');
                       ##########################################################
                       ### 
                       ### Whether this was reported.
-                      ### Code 1 if this was reported
-                      ### without justification; code
-                      ### 2 if this was reported and
+                      ### Code 1 if this was not
+                      ### reported; 2 if this was
+                      ### reported without
+                      ### justification; code 3 if
+                      ### this was reported and
                       ### justified, but no source
-                      ### was cited; code 3 if this
+                      ### was cited; code 4 if this
                       ### was reported and justified,
                       ### and one or more sources
                       ### were cited.
                       ### 
                       ### EXAMPLE:
                       ### 
-                      ### c(1, 2, 3)
+                      ### c(1, 2, 3, 4)
                       ### 
                       ##########################################################
-                      study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_toApplic$recursion_desOutcome_det_methodEnv_context[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                      study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_toApplic$recursion_desOutcome_det_methodEnv_context[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                       ##########################################################
                       # END: recursion_desOutcome_det_methodEnv_context (REPEATING) ###
                       ##########################################################
@@ -4197,21 +4224,23 @@ study <- Node$new('study');
                       ##########################################################
                       ### 
                       ### Whether this was reported.
-                      ### Code 1 if this was reported
-                      ### without justification; code
-                      ### 2 if this was reported and
+                      ### Code 1 if this was not
+                      ### reported; 2 if this was
+                      ### reported without
+                      ### justification; code 3 if
+                      ### this was reported and
                       ### justified, but no source
-                      ### was cited; code 3 if this
+                      ### was cited; code 4 if this
                       ### was reported and justified,
                       ### and one or more sources
                       ### were cited.
                       ### 
                       ### EXAMPLE:
                       ### 
-                      ### c(1, 2, 3)
+                      ### c(1, 2, 3, 4)
                       ### 
                       ##########################################################
-                      study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_toApplic$recursion_desOutcome_det_methodEnv_params_list[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                      study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_toApplic$recursion_desOutcome_det_methodEnv_params_list[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                       ##########################################################
                       # END: recursion_desOutcome_det_methodEnv_params_list (REPEATING) ###
                       ##########################################################
@@ -4244,21 +4273,23 @@ study <- Node$new('study');
                       ##########################################################
                       ### 
                       ### Whether this was reported.
-                      ### Code 1 if this was reported
-                      ### without justification; code
-                      ### 2 if this was reported and
+                      ### Code 1 if this was not
+                      ### reported; 2 if this was
+                      ### reported without
+                      ### justification; code 3 if
+                      ### this was reported and
                       ### justified, but no source
-                      ### was cited; code 3 if this
+                      ### was cited; code 4 if this
                       ### was reported and justified,
                       ### and one or more sources
                       ### were cited.
                       ### 
                       ### EXAMPLE:
                       ### 
-                      ### c(1, 2, 3)
+                      ### c(1, 2, 3, 4)
                       ### 
                       ##########################################################
-                      study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_toApplic$recursion_desOutcome_det_methodEnv_params_apply[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                      study$methods$variables$interventions$intervention$changeLogicModel$mainInterventionDesOutcome$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_toApplic$recursion_desOutcome_det_methodEnv_params_apply[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                       ##########################################################
                       # END: recursion_desOutcome_det_methodEnv_params_apply (REPEATING) ###
                       ##########################################################
@@ -4306,8 +4337,8 @@ study <- Node$new('study');
               ############################### VALUE DESCRIPTION AND EXAMPLES ###
               ##################################################################
               ### 
-              ### Whether this task was completed. Code NA if
-              ### this was not reported; 1 if this was
+              ### Whether this task was completed. Code 1 if
+              ### this was not reported; 2 if this was
               ### reported or present.
               ### 
               ### EXAMPLE:
@@ -4412,18 +4443,19 @@ study <- Node$new('study');
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              study$methods$variables$interventions$intervention$programStructure$programTheme$programTheme_generated[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              study$methods$variables$interventions$intervention$programStructure$programTheme$programTheme_generated[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               ################################## END: programTheme_generated ###
               ##################################################################
@@ -4503,18 +4535,19 @@ study <- Node$new('study');
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              study$methods$variables$interventions$intervention$programStructure$programScope$programScope_generated[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              study$methods$variables$interventions$intervention$programStructure$programScope$programScope_generated[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               ################################## END: programScope_generated ###
               ##################################################################
@@ -4593,18 +4626,19 @@ study <- Node$new('study');
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              study$methods$variables$interventions$intervention$programStructure$programSequence$programSequence_generated[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              study$methods$variables$interventions$intervention$programStructure$programSequence$programSequence_generated[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               ############################### END: programSequence_generated ###
               ##################################################################
@@ -4685,18 +4719,19 @@ study <- Node$new('study');
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              study$methods$variables$interventions$intervention$programStructure$programChannelVehicles$programChannelVehicles_selected[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              study$methods$variables$interventions$intervention$programStructure$programChannelVehicles$programChannelVehicles_selected[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               ######################### END: programChannelVehicles_selected ###
               ##################################################################
@@ -4726,18 +4761,19 @@ study <- Node$new('study');
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              study$methods$variables$interventions$intervention$programStructure$programChannelVehicles$programChannelVehicles_discussed[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              study$methods$variables$interventions$intervention$programStructure$programChannelVehicles$programChannelVehicles_discussed[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               ######################## END: programChannelVehicles_discussed ###
               ##################################################################
@@ -4791,19 +4827,19 @@ study <- Node$new('study');
                 ################################################################
                 ### 
                 ### Whether this was reported. Code 1 if
-                ### this was reported without
-                ### justification; code 2 if this was
-                ### reported and justified, but no source
-                ### was cited; code 3 if this was reported
-                ### and justified, and one or more sources
-                ### were cited.
+                ### this was not reported; 2 if this was
+                ### reported without justification; code 3
+                ### if this was reported and justified, but
+                ### no source was cited; code 4 if this was
+                ### reported and justified, and one or more
+                ### sources were cited.
                 ### 
                 ### EXAMPLE:
                 ### 
-                ### c(1, 2, 3)
+                ### c(1, 2, 3, 4)
                 ### 
                 ################################################################
-                study$methods$variables$interventions$intervention$programStructure$programComponents$programComponent$programComponent_generated[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                study$methods$variables$interventions$intervention$programStructure$programComponents$programComponent$programComponent_generated[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                 ################################################################
                 ############################ END: programComponent_generated ###
                 ################################################################
@@ -4849,7 +4885,7 @@ study <- Node$new('study');
                   ##############################################################
                   ### 
                   ### Whether this task was completed.
-                  ### Code NA if this was not reported; 1
+                  ### Code 1 if this was not reported; 2
                   ### if this was reported or present.
                   ### 
                   ### EXAMPLE:
@@ -4887,19 +4923,20 @@ study <- Node$new('study');
                   ##############################################################
                   ### 
                   ### Whether this was reported. Code 1
-                  ### if this was reported without
-                  ### justification; code 2 if this was
-                  ### reported and justified, but no
-                  ### source was cited; code 3 if this
-                  ### was reported and justified, and one
-                  ### or more sources were cited.
+                  ### if this was not reported; 2 if this
+                  ### was reported without justification;
+                  ### code 3 if this was reported and
+                  ### justified, but no source was cited;
+                  ### code 4 if this was reported and
+                  ### justified, and one or more sources
+                  ### were cited.
                   ### 
                   ### EXAMPLE:
                   ### 
-                  ### c(1, 2, 3)
+                  ### c(1, 2, 3, 4)
                   ### 
                   ##############################################################
-                  study$methods$variables$interventions$intervention$programStructure$programComponents$programComponent$programComponent_theoryCond$programComponent_theoryCond_pretest_select[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                  study$methods$variables$interventions$intervention$programStructure$programComponents$programComponent$programComponent_theoryCond$programComponent_theoryCond_pretest_select[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                   ##############################################################
                   ########## END: programComponent_theoryCond_pretest_select ###
                   ##############################################################
@@ -4976,19 +5013,20 @@ study <- Node$new('study');
                   ##############################################################
                   ### 
                   ### Whether this was reported. Code 1
-                  ### if this was reported without
-                  ### justification; code 2 if this was
-                  ### reported and justified, but no
-                  ### source was cited; code 3 if this
-                  ### was reported and justified, and one
-                  ### or more sources were cited.
+                  ### if this was not reported; 2 if this
+                  ### was reported without justification;
+                  ### code 3 if this was reported and
+                  ### justified, but no source was cited;
+                  ### code 4 if this was reported and
+                  ### justified, and one or more sources
+                  ### were cited.
                   ### 
                   ### EXAMPLE:
                   ### 
-                  ### c(1, 2, 3)
+                  ### c(1, 2, 3, 4)
                   ### 
                   ##############################################################
-                  study$methods$variables$interventions$intervention$programStructure$programComponents$programComponent$programComponent_CO$programComponent_CO_pretest_select[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+                  study$methods$variables$interventions$intervention$programStructure$programComponents$programComponent$programComponent_CO$programComponent_CO_pretest_select[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
                   ##############################################################
                   ################## END: programComponent_CO_pretest_select ###
                   ##############################################################
@@ -5138,8 +5176,8 @@ study <- Node$new('study');
               ############################### VALUE DESCRIPTION AND EXAMPLES ###
               ##################################################################
               ### 
-              ### Whether this task was completed. Code NA if
-              ### this was not reported; 1 if this was
+              ### Whether this task was completed. Code 1 if
+              ### this was not reported; 2 if this was
               ### reported or present.
               ### 
               ### EXAMPLE:
@@ -5174,8 +5212,8 @@ study <- Node$new('study');
               ############################### VALUE DESCRIPTION AND EXAMPLES ###
               ##################################################################
               ### 
-              ### Whether this task was completed. Code NA if
-              ### this was not reported; 1 if this was
+              ### Whether this task was completed. Code 1 if
+              ### this was not reported; 2 if this was
               ### reported or present.
               ### 
               ### EXAMPLE:
@@ -5217,9 +5255,9 @@ study <- Node$new('study');
             ################################# VALUE DESCRIPTION AND EXAMPLES ###
             ####################################################################
             ### 
-            ### Whether this task was completed. Code NA if
-            ### this was not reported; 1 if this was reported
-            ### or present.
+            ### Whether this task was completed. Code 1 if this
+            ### was not reported; 2 if this was reported or
+            ### present.
             ### 
             ### EXAMPLE:
             ### 
@@ -5253,9 +5291,9 @@ study <- Node$new('study');
             ################################# VALUE DESCRIPTION AND EXAMPLES ###
             ####################################################################
             ### 
-            ### Whether this task was completed. Code NA if
-            ### this was not reported; 1 if this was reported
-            ### or present.
+            ### Whether this task was completed. Code 1 if this
+            ### was not reported; 2 if this was reported or
+            ### present.
             ### 
             ### EXAMPLE:
             ### 
@@ -5288,9 +5326,9 @@ study <- Node$new('study');
             ################################# VALUE DESCRIPTION AND EXAMPLES ###
             ####################################################################
             ### 
-            ### Whether this task was completed. Code NA if
-            ### this was not reported; 1 if this was reported
-            ### or present.
+            ### Whether this task was completed. Code 1 if this
+            ### was not reported; 2 if this was reported or
+            ### present.
             ### 
             ### EXAMPLE:
             ### 
@@ -5623,9 +5661,9 @@ study <- Node$new('study');
             ################################# VALUE DESCRIPTION AND EXAMPLES ###
             ####################################################################
             ### 
-            ### Whether this task was completed. Code NA if
-            ### this was not reported; 1 if this was reported
-            ### or present.
+            ### Whether this task was completed. Code 1 if this
+            ### was not reported; 2 if this was reported or
+            ### present.
             ### 
             ### EXAMPLE:
             ### 
@@ -5717,8 +5755,8 @@ study <- Node$new('study');
   ########################################### VALUE DESCRIPTION AND EXAMPLES ###
   ##############################################################################
   ### 
-  ### Whether this task was completed. Code NA if this was not reported;
-  ### 1 if this was reported or present.
+  ### Whether this task was completed. Code 1 if this was not reported; 2
+  ### if this was reported or present.
   ### 
   ### EXAMPLE:
   ### 
@@ -5921,8 +5959,8 @@ class(study) <- c('rxs', class(study));
     ######################################### VALUE DESCRIPTION AND EXAMPLES ###
     ############################################################################
     ### 
-    ### Whether this task was completed. Code NA if this was not
-    ### reported; 1 if this was reported or present.
+    ### Whether this task was completed. Code 1 if this was not
+    ### reported; 2 if this was reported or present.
     ### 
     ### EXAMPLE:
     ### 
@@ -5958,17 +5996,17 @@ class(study) <- c('rxs', class(study));
     ######################################### VALUE DESCRIPTION AND EXAMPLES ###
     ############################################################################
     ### 
-    ### Whether this was reported. Code 1 if this was reported without
-    ### justification; code 2 if this was reported and justified, but
-    ### no source was cited; code 3 if this was reported and justified,
-    ### and one or more sources were cited.
+    ### Whether this was reported. Code 1 if this was not reported; 2
+    ### if this was reported without justification; code 3 if this was
+    ### reported and justified, but no source was cited; code 4 if this
+    ### was reported and justified, and one or more sources were cited.
     ### 
     ### EXAMPLE:
     ### 
-    ### c(1, 2, 3)
+    ### c(1, 2, 3, 4)
     ### 
     ############################################################################
-    recursiveElementPlaceholder_level1$recursion_desOutcome_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+    recursiveElementPlaceholder_level1$recursion_desOutcome_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
     ############################################################################
     ########################### END: recursion_desOutcome_justif (REPEATING) ###
     ############################################################################
@@ -6005,8 +6043,8 @@ class(study) <- c('rxs', class(study));
       ####################################### VALUE DESCRIPTION AND EXAMPLES ###
       ##########################################################################
       ### 
-      ### Whether this task was completed. Code NA if this was not
-      ### reported; 1 if this was reported or present.
+      ### Whether this task was completed. Code 1 if this was not
+      ### reported; 2 if this was reported or present.
       ### 
       ### EXAMPLE:
       ### 
@@ -6034,9 +6072,8 @@ class(study) <- c('rxs', class(study));
     ### DESIRABLE OUTCOME: SELECT
     ### 
     ### Any description of the justification for the selection of
-    ### environmental/implementation outcomes or agents on the basis of
-    ### relevance and changeability (note: can be empty for the main
-    ### intervention outcome, which is implicitly selected)
+    ### individual level/environmental level/implementation outcomes or
+    ### agents on the basis of relevance and changeability.
     ### 
     ############################################################################
         
@@ -6046,8 +6083,8 @@ class(study) <- c('rxs', class(study));
     ######################################### VALUE DESCRIPTION AND EXAMPLES ###
     ############################################################################
     ### 
-    ### Whether this task was completed. Code NA if this was not
-    ### reported; 1 if this was reported or present.
+    ### Whether this task was completed. Code 1 if this was not
+    ### reported; 2 if this was reported or present.
     ### 
     ### EXAMPLE:
     ### 
@@ -6137,8 +6174,8 @@ class(study) <- c('rxs', class(study));
       ####################################### VALUE DESCRIPTION AND EXAMPLES ###
       ##########################################################################
       ### 
-      ### Whether this task was completed. Code NA if this was not
-      ### reported; 1 if this was reported or present.
+      ### Whether this task was completed. Code 1 if this was not
+      ### reported; 2 if this was reported or present.
       ### 
       ### EXAMPLE:
       ### 
@@ -6174,17 +6211,18 @@ class(study) <- c('rxs', class(study));
       ####################################### VALUE DESCRIPTION AND EXAMPLES ###
       ##########################################################################
       ### 
-      ### Whether this was reported. Code 1 if this was reported
-      ### without justification; code 2 if this was reported and
-      ### justified, but no source was cited; code 3 if this was
-      ### reported and justified, and one or more sources were cited.
+      ### Whether this was reported. Code 1 if this was not reported;
+      ### 2 if this was reported without justification; code 3 if
+      ### this was reported and justified, but no source was cited;
+      ### code 4 if this was reported and justified, and one or more
+      ### sources were cited.
       ### 
       ### EXAMPLE:
       ### 
-      ### c(1, 2, 3)
+      ### c(1, 2, 3, 4)
       ### 
       ##########################################################################
-      recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_desBeh_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+      recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_desBeh_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
       ##########################################################################
       ############################## END: recursion_desOutcome_desBeh_justif ###
       ##########################################################################
@@ -6256,8 +6294,8 @@ class(study) <- c('rxs', class(study));
         ##################################### VALUE DESCRIPTION AND EXAMPLES ###
         ########################################################################
         ### 
-        ### Whether this task was completed. Code NA if this was
-        ### not reported; 1 if this was reported or present.
+        ### Whether this task was completed. Code 1 if this was not
+        ### reported; 2 if this was reported or present.
         ### 
         ### EXAMPLE:
         ### 
@@ -6291,18 +6329,18 @@ class(study) <- c('rxs', class(study));
         ##################################### VALUE DESCRIPTION AND EXAMPLES ###
         ########################################################################
         ### 
-        ### Whether this was reported. Code 1 if this was reported
-        ### without justification; code 2 if this was reported and
-        ### justified, but no source was cited; code 3 if this was
-        ### reported and justified, and one or more sources were
-        ### cited.
+        ### Whether this was reported. Code 1 if this was not
+        ### reported; 2 if this was reported without justification;
+        ### code 3 if this was reported and justified, but no
+        ### source was cited; code 4 if this was reported and
+        ### justified, and one or more sources were cited.
         ### 
         ### EXAMPLE:
         ### 
-        ### c(1, 2, 3)
+        ### c(1, 2, 3, 4)
         ### 
         ########################################################################
-        recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+        recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
         ########################################################################
         #################### END: recursion_desOutcome_PO_justif (REPEATING) ###
         ########################################################################
@@ -6330,18 +6368,18 @@ class(study) <- c('rxs', class(study));
         ##################################### VALUE DESCRIPTION AND EXAMPLES ###
         ########################################################################
         ### 
-        ### Whether this was reported. Code 1 if this was reported
-        ### without justification; code 2 if this was reported and
-        ### justified, but no source was cited; code 3 if this was
-        ### reported and justified, and one or more sources were
-        ### cited.
+        ### Whether this was reported. Code 1 if this was not
+        ### reported; 2 if this was reported without justification;
+        ### code 3 if this was reported and justified, but no
+        ### source was cited; code 4 if this was reported and
+        ### justified, and one or more sources were cited.
         ### 
         ### EXAMPLE:
         ### 
-        ### c(1, 2, 3)
+        ### c(1, 2, 3, 4)
         ### 
         ########################################################################
-        recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_select[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+        recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_PO_select[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
         ########################################################################
         ################################ END: recursion_desOutcome_PO_select ###
         ########################################################################
@@ -6497,9 +6535,8 @@ class(study) <- c('rxs', class(study));
           ################################### VALUE DESCRIPTION AND EXAMPLES ###
           ######################################################################
           ### 
-          ### Whether this task was completed. Code NA if this
-          ### was not reported; 1 if this was reported or
-          ### present.
+          ### Whether this task was completed. Code 1 if this was
+          ### not reported; 2 if this was reported or present.
           ### 
           ### EXAMPLE:
           ### 
@@ -6533,18 +6570,19 @@ class(study) <- c('rxs', class(study));
           ################################### VALUE DESCRIPTION AND EXAMPLES ###
           ######################################################################
           ### 
-          ### Whether this was reported. Code 1 if this was
-          ### reported without justification; code 2 if this was
-          ### reported and justified, but no source was cited;
-          ### code 3 if this was reported and justified, and one
-          ### or more sources were cited.
+          ### Whether this was reported. Code 1 if this was not
+          ### reported; 2 if this was reported without
+          ### justification; code 3 if this was reported and
+          ### justified, but no source was cited; code 4 if this
+          ### was reported and justified, and one or more sources
+          ### were cited.
           ### 
           ### EXAMPLE:
           ### 
-          ### c(1, 2, 3)
+          ### c(1, 2, 3, 4)
           ### 
           ######################################################################
-          recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+          recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
           ######################################################################
           ################# END: recursion_desOutcome_det_justif (REPEATING) ###
           ######################################################################
@@ -6572,18 +6610,19 @@ class(study) <- c('rxs', class(study));
           ################################### VALUE DESCRIPTION AND EXAMPLES ###
           ######################################################################
           ### 
-          ### Whether this was reported. Code 1 if this was
-          ### reported without justification; code 2 if this was
-          ### reported and justified, but no source was cited;
-          ### code 3 if this was reported and justified, and one
-          ### or more sources were cited.
+          ### Whether this was reported. Code 1 if this was not
+          ### reported; 2 if this was reported without
+          ### justification; code 3 if this was reported and
+          ### justified, but no source was cited; code 4 if this
+          ### was reported and justified, and one or more sources
+          ### were cited.
           ### 
           ### EXAMPLE:
           ### 
-          ### c(1, 2, 3)
+          ### c(1, 2, 3, 4)
           ### 
           ######################################################################
-          recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_select[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+          recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_select[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
           ######################################################################
           ############################# END: recursion_desOutcome_det_select ###
           ######################################################################
@@ -6692,9 +6731,9 @@ class(study) <- c('rxs', class(study));
             ################################# VALUE DESCRIPTION AND EXAMPLES ###
             ####################################################################
             ### 
-            ### Whether this task was completed. Code NA if
-            ### this was not reported; 1 if this was reported
-            ### or present.
+            ### Whether this task was completed. Code 1 if this
+            ### was not reported; 2 if this was reported or
+            ### present.
             ### 
             ### EXAMPLE:
             ### 
@@ -6729,17 +6768,18 @@ class(study) <- c('rxs', class(study));
             ####################################################################
             ### 
             ### Whether this was reported. Code 1 if this was
-            ### reported without justification; code 2 if this
-            ### was reported and justified, but no source was
-            ### cited; code 3 if this was reported and
-            ### justified, and one or more sources were cited.
+            ### not reported; 2 if this was reported without
+            ### justification; code 3 if this was reported and
+            ### justified, but no source was cited; code 4 if
+            ### this was reported and justified, and one or
+            ### more sources were cited.
             ### 
             ### EXAMPLE:
             ### 
-            ### c(1, 2, 3)
+            ### c(1, 2, 3, 4)
             ### 
             ####################################################################
-            recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_subdet$recursion_desOutcome_subdet_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+            recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_subdet$recursion_desOutcome_subdet_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
             ####################################################################
             ############ END: recursion_desOutcome_subdet_justif (REPEATING) ###
             ####################################################################
@@ -6765,9 +6805,9 @@ class(study) <- c('rxs', class(study));
             ################################# VALUE DESCRIPTION AND EXAMPLES ###
             ####################################################################
             ### 
-            ### Whether this task was completed. Code NA if
-            ### this was not reported; 1 if this was reported
-            ### or present.
+            ### Whether this task was completed. Code 1 if this
+            ### was not reported; 2 if this was reported or
+            ### present.
             ### 
             ### EXAMPLE:
             ### 
@@ -6883,9 +6923,9 @@ class(study) <- c('rxs', class(study));
             ################################# VALUE DESCRIPTION AND EXAMPLES ###
             ####################################################################
             ### 
-            ### Whether this task was completed. Code NA if
-            ### this was not reported; 1 if this was reported
-            ### or present.
+            ### Whether this task was completed. Code 1 if this
+            ### was not reported; 2 if this was reported or
+            ### present.
             ### 
             ### EXAMPLE:
             ### 
@@ -6918,9 +6958,9 @@ class(study) <- c('rxs', class(study));
             ################################# VALUE DESCRIPTION AND EXAMPLES ###
             ####################################################################
             ### 
-            ### Whether this task was completed. Code NA if
-            ### this was not reported; 1 if this was reported
-            ### or present.
+            ### Whether this task was completed. Code 1 if this
+            ### was not reported; 2 if this was reported or
+            ### present.
             ### 
             ### EXAMPLE:
             ### 
@@ -6974,17 +7014,18 @@ class(study) <- c('rxs', class(study));
             ####################################################################
             ### 
             ### Whether this was reported. Code 1 if this was
-            ### reported without justification; code 2 if this
-            ### was reported and justified, but no source was
-            ### cited; code 3 if this was reported and
-            ### justified, and one or more sources were cited.
+            ### not reported; 2 if this was reported without
+            ### justification; code 3 if this was reported and
+            ### justified, but no source was cited; code 4 if
+            ### this was reported and justified, and one or
+            ### more sources were cited.
             ### 
             ### EXAMPLE:
             ### 
-            ### c(1, 2, 3)
+            ### c(1, 2, 3, 4)
             ### 
             ####################################################################
-            recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_selected[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+            recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_selected[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
             ####################################################################
             ### END: recursion_desOutcome_det_methodInd_selected (REPEATING) ###
             ####################################################################
@@ -7013,17 +7054,18 @@ class(study) <- c('rxs', class(study));
             ####################################################################
             ### 
             ### Whether this was reported. Code 1 if this was
-            ### reported without justification; code 2 if this
-            ### was reported and justified, but no source was
-            ### cited; code 3 if this was reported and
-            ### justified, and one or more sources were cited.
+            ### not reported; 2 if this was reported without
+            ### justification; code 3 if this was reported and
+            ### justified, but no source was cited; code 4 if
+            ### this was reported and justified, and one or
+            ### more sources were cited.
             ### 
             ### EXAMPLE:
             ### 
-            ### c(1, 2, 3)
+            ### c(1, 2, 3, 4)
             ### 
             ####################################################################
-            recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+            recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
             ####################################################################
             ##### END: recursion_desOutcome_det_methodInd_justif (REPEATING) ###
             ####################################################################
@@ -7063,8 +7105,8 @@ class(study) <- c('rxs', class(study));
               ############################### VALUE DESCRIPTION AND EXAMPLES ###
               ##################################################################
               ### 
-              ### Whether this task was completed. Code NA if
-              ### this was not reported; 1 if this was
+              ### Whether this task was completed. Code 1 if
+              ### this was not reported; 2 if this was
               ### reported or present.
               ### 
               ### EXAMPLE:
@@ -7102,18 +7144,19 @@ class(study) <- c('rxs', class(study));
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_toApplic$recursion_desOutcome_det_methodInd_context[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_toApplic$recursion_desOutcome_det_methodInd_context[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               ## END: recursion_desOutcome_det_methodInd_context (REPEATING) ###
               ##################################################################
@@ -7142,18 +7185,19 @@ class(study) <- c('rxs', class(study));
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_toApplic$recursion_desOutcome_det_methodInd_params_list[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_toApplic$recursion_desOutcome_det_methodInd_params_list[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               # END: recursion_desOutcome_det_methodInd_params_list (REPEATING) ###
               ##################################################################
@@ -7183,18 +7227,19 @@ class(study) <- c('rxs', class(study));
               ##################################################################
               ### 
               ### Whether this was reported. Code 1 if this
-              ### was reported without justification; code 2
-              ### if this was reported and justified, but no
-              ### source was cited; code 3 if this was
-              ### reported and justified, and one or more
-              ### sources were cited.
+              ### was not reported; 2 if this was reported
+              ### without justification; code 3 if this was
+              ### reported and justified, but no source was
+              ### cited; code 4 if this was reported and
+              ### justified, and one or more sources were
+              ### cited.
               ### 
               ### EXAMPLE:
               ### 
-              ### c(1, 2, 3)
+              ### c(1, 2, 3, 4)
               ### 
               ##################################################################
-              recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_toApplic$recursion_desOutcome_det_methodInd_params_apply[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+              recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det$recursion_desOutcome_det_methodInd$recursion_desOutcome_det_methodInd_toApplic$recursion_desOutcome_det_methodInd_params_apply[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
               ##################################################################
               # END: recursion_desOutcome_det_methodInd_params_apply (REPEATING) ###
               ##################################################################
@@ -7249,18 +7294,19 @@ class(study) <- c('rxs', class(study));
           ################################### VALUE DESCRIPTION AND EXAMPLES ###
           ######################################################################
           ### 
-          ### Whether this was reported. Code 1 if this was
-          ### reported without justification; code 2 if this was
-          ### reported and justified, but no source was cited;
-          ### code 3 if this was reported and justified, and one
-          ### or more sources were cited.
+          ### Whether this was reported. Code 1 if this was not
+          ### reported; 2 if this was reported without
+          ### justification; code 3 if this was reported and
+          ### justified, but no source was cited; code 4 if this
+          ### was reported and justified, and one or more sources
+          ### were cited.
           ### 
           ### EXAMPLE:
           ### 
-          ### c(1, 2, 3)
+          ### c(1, 2, 3, 4)
           ### 
           ######################################################################
-          recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_selected[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+          recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_selected[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
           ######################################################################
           ##### END: recursion_desOutcome_det_methodEnv_selected (REPEATING) ###
           ######################################################################
@@ -7290,18 +7336,19 @@ class(study) <- c('rxs', class(study));
           ################################### VALUE DESCRIPTION AND EXAMPLES ###
           ######################################################################
           ### 
-          ### Whether this was reported. Code 1 if this was
-          ### reported without justification; code 2 if this was
-          ### reported and justified, but no source was cited;
-          ### code 3 if this was reported and justified, and one
-          ### or more sources were cited.
+          ### Whether this was reported. Code 1 if this was not
+          ### reported; 2 if this was reported without
+          ### justification; code 3 if this was reported and
+          ### justified, but no source was cited; code 4 if this
+          ### was reported and justified, and one or more sources
+          ### were cited.
           ### 
           ### EXAMPLE:
           ### 
-          ### c(1, 2, 3)
+          ### c(1, 2, 3, 4)
           ### 
           ######################################################################
-          recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+          recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_justif[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
           ######################################################################
           ####### END: recursion_desOutcome_det_methodEnv_justif (REPEATING) ###
           ######################################################################
@@ -7340,9 +7387,9 @@ class(study) <- c('rxs', class(study));
             ################################# VALUE DESCRIPTION AND EXAMPLES ###
             ####################################################################
             ### 
-            ### Whether this task was completed. Code NA if
-            ### this was not reported; 1 if this was reported
-            ### or present.
+            ### Whether this task was completed. Code 1 if this
+            ### was not reported; 2 if this was reported or
+            ### present.
             ### 
             ### EXAMPLE:
             ### 
@@ -7378,17 +7425,18 @@ class(study) <- c('rxs', class(study));
             ####################################################################
             ### 
             ### Whether this was reported. Code 1 if this was
-            ### reported without justification; code 2 if this
-            ### was reported and justified, but no source was
-            ### cited; code 3 if this was reported and
-            ### justified, and one or more sources were cited.
+            ### not reported; 2 if this was reported without
+            ### justification; code 3 if this was reported and
+            ### justified, but no source was cited; code 4 if
+            ### this was reported and justified, and one or
+            ### more sources were cited.
             ### 
             ### EXAMPLE:
             ### 
-            ### c(1, 2, 3)
+            ### c(1, 2, 3, 4)
             ### 
             ####################################################################
-            recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_toApplic$recursion_desOutcome_det_methodEnv_context[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+            recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_toApplic$recursion_desOutcome_det_methodEnv_context[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
             ####################################################################
             #### END: recursion_desOutcome_det_methodEnv_context (REPEATING) ###
             ####################################################################
@@ -7417,17 +7465,18 @@ class(study) <- c('rxs', class(study));
             ####################################################################
             ### 
             ### Whether this was reported. Code 1 if this was
-            ### reported without justification; code 2 if this
-            ### was reported and justified, but no source was
-            ### cited; code 3 if this was reported and
-            ### justified, and one or more sources were cited.
+            ### not reported; 2 if this was reported without
+            ### justification; code 3 if this was reported and
+            ### justified, but no source was cited; code 4 if
+            ### this was reported and justified, and one or
+            ### more sources were cited.
             ### 
             ### EXAMPLE:
             ### 
-            ### c(1, 2, 3)
+            ### c(1, 2, 3, 4)
             ### 
             ####################################################################
-            recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_toApplic$recursion_desOutcome_det_methodEnv_params_list[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+            recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_toApplic$recursion_desOutcome_det_methodEnv_params_list[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
             ####################################################################
             # END: recursion_desOutcome_det_methodEnv_params_list (REPEATING) ###
             ####################################################################
@@ -7457,17 +7506,18 @@ class(study) <- c('rxs', class(study));
             ####################################################################
             ### 
             ### Whether this was reported. Code 1 if this was
-            ### reported without justification; code 2 if this
-            ### was reported and justified, but no source was
-            ### cited; code 3 if this was reported and
-            ### justified, and one or more sources were cited.
+            ### not reported; 2 if this was reported without
+            ### justification; code 3 if this was reported and
+            ### justified, but no source was cited; code 4 if
+            ### this was reported and justified, and one or
+            ### more sources were cited.
             ### 
             ### EXAMPLE:
             ### 
-            ### c(1, 2, 3)
+            ### c(1, 2, 3, 4)
             ### 
             ####################################################################
-            recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_toApplic$recursion_desOutcome_det_methodEnv_params_apply[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3)));
+            recursiveElementPlaceholder_level1$recursion_desOutcome_desBeh$recursion_desOutcome_PO$recursion_desOutcome_det_methodEnv$recursion_desOutcome_det_methodEnv_toApplic$recursion_desOutcome_det_methodEnv_params_apply[['validation']] <- expression(is.na(VALUE) || (VALUE %in% c(1, 2, 3, 4)));
             ####################################################################
             # END: recursion_desOutcome_det_methodEnv_params_apply (REPEATING) ###
             ####################################################################
@@ -7514,8 +7564,8 @@ class(study) <- c('rxs', class(study));
     ######################################### VALUE DESCRIPTION AND EXAMPLES ###
     ############################################################################
     ### 
-    ### Whether this task was completed. Code NA if this was not
-    ### reported; 1 if this was reported or present.
+    ### Whether this task was completed. Code 1 if this was not
+    ### reported; 2 if this was reported or present.
     ### 
     ### EXAMPLE:
     ### 

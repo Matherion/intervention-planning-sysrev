@@ -76,6 +76,11 @@ options(figCapCounter = 0);
 
 ```{r extraction-script-generation}
 
+### Migrate the spreadsheet to the metabefor rxs
+
+definitionsSheet <- 'Definitions';
+localdefinitionsSheetFile <- file.path(basePath, 'wim-definitionsSheet.csv');
+
 sheetsURL <- paste0("https://docs.google.com/spreadsheets/d/",
                     "1ByCHCThVha-EXRzTyQYoTTYv9e4N0Lj6btLBS6xrDHs");
 
@@ -183,4 +188,323 @@ cat("\n\n<pre><textarea rows='40' cols='124' style='font-family:monospace;font-s
     unlist(fullObject$rxsTemplate),
     "</textarea></pre>\n\n",
     sep="\n");
+```
+
+#### Checklist
+
+```{r checklist}
+
+
+### http://stackoverflow.com/questions/3665115/create-a-file-in-memory-for-user-to-download-not-through-server
+
+###############################################################################
+###############################################################################
+### Checklist functions
+###############################################################################
+###############################################################################
+
+generateChecklistElements <- function(node) {
+
+  lvl <- node$level;
+  id <- node$name;
+  if (isRecursive(node[[recursionColName]]) && !isTrue(node[[recursionColName]])) {
+      if (node$trulyRecursive) {
+        return("<div>Another truly recursive element</div>");
+      }
+      ### Insert the recursive element here
+    return(paste0('<div class="metabefor-nesting metabefor-nesting-level', lvl, '">\n',
+                  '<h', lvl, '>', node$ChecklistTitle, '</h', lvl, '>\n',
+                  "<p class='metabefor-checkbox-description'>", node$ChecklistDescription, "</p>",
+                  paste0(sapply(FindNode(extractionScriptTree, name=node[[recursionColName]])$children,
+                           generateChecklistElements), collapse="\n"),
+                  '</div>'));
+  } else if (isLeaf(node)) {
+    
+    ### We're going to construct a checkbox, with a name (title) and a description,
+    ### as well as three buttons to toggle the checkbox status.
+    ### To prevent recursive elements to have duplicated id's, we need to add
+    ### a unique string to the id.
+    uniqueId <- paste0(c(node$name,
+                         as.numeric(format(Sys.time(), "%OS3")) * 1000,
+                         sample(LETTERS, 3, TRUE)),
+                       collapse="");
+    
+    return(paste0("<div class='metabefor-checkbox-container'>",
+
+                  #"<br><br>", node$name, "<br><br>",
+
+                  "<div id='metabefor-checkbox-", uniqueId, "' class='metabefor-checkbox-svg-container'>",
+                  
+                  
+                  '<svg xmlns="https://www.w3.org/2000/svg" version="1.1" viewBox="0 0 11.1125 11.112501" height="42" width="42"><path style="fill:#FFFFFF;fill-opacity:1;fill-rule:evenodd;stroke:none;" d="M 0.72039847,5.5008244 5.0912096,10.409253 10.343529,0.77453521 4.4461307,7.4949906 Z" class="checkbox-checkmark" /><path style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5291667;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1" d="M 0.26458335,0.26458335 H 10.847916 V 10.847916 H 0.26458335 v -10.58333265 0" class="checkbox-border" /></svg>',
+
+
+                  "</div>",
+                  
+                  
+                  "<div class='metabefor-buttons'>\n",
+                  "<span class='metabefor-checklist-title'>\n",
+                  node$ChecklistTitle,
+                  "</span>",
+                  "<span class='metabefor-checkbox-description'>",
+                  node$ChecklistDescription,
+                  "</span>\n",
+                  
+                  "<div class='metabefor-book-reference' id='#metabefor-bookreference-", node$name, "'>",
+                  ifelse(grepl("[A-Za-z]", node$BookReference_4),
+                         paste0("<p>", node$BookReference_4, "</p>"),
+                         paste0("<p>More information in the Intervention Mapping book, fourth edition, at page ",
+                                node$BookReference_4, " and further.</p>")),
+                  ifelse(nchar(node$OtherReference) > 0,
+                         paste0("<p>", node$OtherReference, "</p>"),
+                         ""),
+                  "</div>\n",
+                  
+                  
+                  '<div class="btn-group metabefor-buttongroup" data-toggle="buttons" aria-label="Options">\n',
+                  '<label class="btn btn-success" onclick="checkboxYes(\'', uniqueId, '\')">\n',
+                  '<input type="radio" name="options" id="metabefor-checkbox-', uniqueId, '-yes" autocomplete="off"></input> Did this',
+                  '</label>',
+                  '<label class="btn btn-danger" onclick="checkboxNo(\'', uniqueId, '\')">\n',
+                  '<input type="radio" name="options" id="metabefor-checkbox-', uniqueId, '-no" autocomplete="off"></input> Did not do this',
+                  '</label>',
+                  '<label class="btn btn-primary" onclick="checkboxNA(\'', uniqueId, '\')">\n',
+                  '<input type="radio" name="options" id="metabefor-checkbox-', uniqueId, '-na" autocomplete="off"></input> Not applicable',
+                  '</label>',
+
+                  "</div>\n",
+                  "\n</div>\n",
+                  "</div>"));
+  } else {
+    return(paste0('<div class="metabefor-nesting metabefor-nesting-level', lvl, '">\n',
+                  '<h', lvl, '>', node$ChecklistTitle, '</h', lvl, '>\n',
+                  paste0(sapply(node$children, generateChecklistElements), collapse="\n"),
+                  '</div>'));
+  }
+}
+
+renderChecklist <- function(extractionScriptTree,
+                            checklistRoot = NULL,
+                            preChecklistHtml = NULL,
+                            outputFile = NULL,
+                            css = "html {\n  font-family: sans-serif;\n}",
+                            header = paste0('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">\n',
+                                            '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>\n',
+                                            '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>\n'),
+                            footer = "<script>\n$(document).ready(function(){\n  $('[data-toggle=\"tooltip\"]').tooltip();\n});\n</script>",
+                            cssURL = NULL,
+                            definitions = NULL,
+                            definitionsTermsCol = 'Term',
+                            definitionsDefCol = 'Definition') {
+
+  checklistHeader <- "<html>\n\n<head>";
+  checklistScript <- "";
+
+  ### Add header info
+  if (!is.null(header)) {
+    if (file.exists(header)) {
+      checklistHeader <- paste0(checklistHeader, '\n',
+                                paste0(readLines(header), collapse="\n"),
+                                '\n');
+    } else {
+      checklistHeader <- paste0(checklistHeader, header, '\n');
+    }
+  }
+  
+  ### Add stylesheet info
+  if (!is.null(cssURL)) {
+    checklistHeader <- paste0(checklistHeader, '<link rel="stylesheet" type="text/css" href="', cssURL, '">\n');
+  } else if (file.exists(css)) {
+    checklistHeader <- paste0(checklistHeader, '<style>\n',
+                            paste0(readLines(css), collapse="\n"),
+                            '</style>\n');
+  } else {
+    checklistHeader <- paste0(checklistHeader, "<style>\n", css, "\n</style>\n");
+  }
+    
+  checklistHeader <- paste0(checklistHeader, "</head>\n\n<body>\n");
+  
+  if (is.null(checklistRoot)) {
+    checklistRoot <- extractionScriptTree$root$name;
+  }
+
+  checklistBody <- paste0(sapply(FindNode(extractionScriptTree, checklistRoot)$children,
+                                 generateChecklistElements),
+                          collapse="\n");
+
+  for (i in 1:nrow(definitions)) {
+    ### Add tooltip to glossary terms - make sure that the regex SKIPs/FAIL
+    ### when inside an A element (i.e. when already inside a tooltop).
+    
+    ### <a[^>]*>[^<]*<\\/a
+    ### <input[^>]*>[^<]*<\\/input
+    ### (*SKIP)(*FAIL)
+    
+    ### See http://www.rexegg.com/regex-best-trick.html
+    
+    #matchString <- paste0("(?:<a[^>]*>[^<]*<\\/a|<input[^>]*>[^<]*<\\/input|<div[^>]*>[^<]*<\\/div)(*SKIP)(*FAIL)|(", definitions[i, definitionsTermsCol], ")");
+    
+    ### From https://stackoverflow.com/questions/18621568/regex-replace-text-outside-html-tags (2018-04-12)
+    #matchString <- paste0("(", definitions[i, definitionsTermsCol], ")(?![^<]*>|[^<>]*<\\/)");
+    
+    ### Only replace if it occurs within the description
+    matchString <- paste0("(<span class='metabefor-checkbox-description'>[^<]*)(",
+                          definitions[i, definitionsTermsCol],
+                          ")([^<]*<\\/span>)");
+    
+    definitionToolTip <- paste0('\\1<a class="metabefor-term-definition" data-toggle="tooltip" title="',
+                                definitions[i, definitionsDefCol],
+    #                            '">', definitions[i, definitionsTermsCol], '</a>');
+                                '">\\2</a>\\3');
+
+  checklistBody <- gsub(matchString, definitionToolTip,
+                        checklistBody, ignore.case = TRUE, perl=FALSE);
+
+    ### From https://stackoverflow.com/questions/14621094/how-to-replace-the-text-inside-an-xml-element-in-r
+    # docAsHTML <- htmlParse(file = checklistBody, asText = TRUE);
+    # nodes <- getNodeSet(docAsHTML, "//Text");
+    # lapply(nodes, function(n) {
+    #   xmlValue(n) <- gsub(definitions[i, definitionsTermsCol],
+    #                       "definitionToolTip",
+    #                       xmlValue(n));
+    # });
+    # 
+    # checklistBody <- saveXML(docAsHTML);
+    # 
+    ### https://github.com/PebbleRoad/glossarizer
+    
+  }
+
+  ### Add footer info
+  if (!is.null(footer)) {
+    if (file.exists(footer)) {
+      checklistFooter <- paste0(readLines(footer), collapse="\n");
+    } else {
+      checklistFooter <- footer;
+    }
+  }
+  
+  definitionTermsOrder <- order(pull(definitions, definitionsTermsCol));
+  
+  checklistDefinitions <- paste0("<div class='metabefor-definitions-container'>\n",
+                                 "<div id='metabefor-definitions-toggle'>\n",
+                                 "Glossary (click here to toggle definitions)</div>\n",
+                                 "<div id='metabefor-definitions-overflowbox'>",
+                                 "<table id='metabefor-definitions'>\n",
+                                 paste0(paste0("<tr>\n",
+                                               "<td class='metabefor-definitions-term-column'>",
+                                               pull(definitions, definitionsTermsCol)[definitionTermsOrder],
+                                               "</td>\n",
+                                               "<td class='metabefor-definitions-definition-column'>",
+                                               pull(definitions, definitionsDefCol)[definitionTermsOrder],
+                                               "</td>\n",
+                                               "</tr>\n"),
+                                        collapse="\n"),
+                                 "</table>\n</div>\n",
+                                 "</div>\n");
+  
+  checklistScript <- paste0(checklistScript,
+                            '\n$(document).ready(function(){\n',
+                            "  var visible = false;",
+                            '$( "#metabefor-definitions-toggle" ).click(function() {\n',
+                            "  if ( visible ) {\n",
+                            "    $( '#metabefor-definitions-overflowbox' ).slideUp('fast',function(){\n",
+                            "      $( '#metabefor-definitions-overflowbox' ).addClass('metabefor-hidden')\n",
+                            "           .slideDown(0);\n",
+                            "    });\n",
+                            "  } else {\n",
+                            "    $( '#metabefor-definitions-overflowbox' ).slideUp(0,function(){\n",
+                            "      $( '#metabefor-definitions-overflowbox' ).removeClass('metabefor-hidden')\n",
+                            "           .slideDown('fast');\n",
+                            "    });\n",
+                            "  }\n",
+                            "  visible = ! visible;\n",
+                            "});\n",
+                            '});');
+  
+  checklistScript <- paste0(checklistScript, "
+
+  checkboxYes = function(elementIdentifier) {
+    $('#metabefor-checkbox-'+elementIdentifier+' .checkbox-checkmark').css(\"fill\", \"#008800\");
+    $('#metabefor-checkbox-'+elementIdentifier+' .checkbox-border').css(\"stroke\", \"#008800\");
+    $('#metabefor-bookreference-'+elementIdentifier).hide();
+  }
+  
+  checkboxNo = function(elementIdentifier) {
+    $('#metabefor-checkbox-'+elementIdentifier+' .checkbox-checkmark').css(\"fill\", \"#FFFFFF\");
+    $('#metabefor-checkbox-'+elementIdentifier+' .checkbox-border').css(\"stroke\", \"#880000\");
+    $('#metabefor-bookreference-'+elementIdentifier).show();
+  }
+
+  checkboxNA = function(elementIdentifier) {
+    $('#metabefor-checkbox-'+elementIdentifier+' .checkbox-checkmark').css(\"fill\", \"#FFFFFF\");
+    $('#metabefor-checkbox-'+elementIdentifier+' .checkbox-border').css(\"stroke\", \"#CCCCDD\");
+    $('#metabefor-bookreference-'+elementIdentifier).hide();
+  }
+
+  ");
+
+  preChecklistHtmlText <- "";
+  if (!is.null(preChecklistHtml)) {
+    if (file.exists(preChecklistHtml)) {
+      preChecklistHtmlText <- readLines(preChecklistHtml,
+                                        encoding="UTF-8");
+    }
+  } 
+
+  ### (The metabefor-header and the checklist definitions are placed after the main
+  ###  content, so that it's rendered on top of that content.)
+  checklistBody <- paste0(checklistHeader, "\n",
+                          "\n<div class='metabefor-content-container'>\n",
+                          paste(preChecklistHtmlText, collapse="\n", sep="\n"),
+                          "\n<div class=\"form-group\">\n",
+                          checklistBody, "\n",
+                          "</div>\n</div>\n",
+                          checklistFooter, "\n",
+                          "\n<div class='metabefor-header'>",
+                          checklistDefinitions,
+                          "</div>\n",
+                          "\n</body>\n<script>\n",
+                          checklistScript,
+                          "\n</script>\n</html>\n");
+  
+  ### Replace UTF-8 non-breaking spaces with regular spaces
+  ### https://stackoverflow.com/questions/14720493/replace-a-utf-8-character-in-r
+  checklistBody <- gsub('\U00A0', ' ', checklistBody);
+
+  if (!is.null(outputFile)) {
+    outputFileCon <- file(outputFile,
+                          "w",
+                          encoding="UTF-8");
+    writeLines(paste0(checklistBody, collapse=""),
+               con=outputFileCon);
+    close(outputFileCon);
+  }
+  
+  invisible(checklistBody);
+
+}
+
+
+tryCatch({
+  ### Then definitions sheet
+  cat0("\nReading extraction sheet from Google Docs.\n");
+  definitions <- gs_read(gs_url(sheetsURL), ws = definitionsSheet);
+  cat0("\nStoring extraction sheet in local file.\n");
+  write.csv(definitions, row.names=FALSE, localdefinitionsSheetFile);
+}, error = function(e) {
+  cat0("\nReading definitions sheet from local file.\n");
+  definitions <<- read.csv(localdefinitionsSheetFile,
+                           stringsAsFactors = FALSE);
+});
+
+
+renderChecklist(fullObject$rxsStructure$parsedEntities$extractionScriptTree,
+                checklistRoot = 'intervention',
+                preChecklistHtml = file.path(basePath, "checklist_frontpage.html"),
+                outputFile = file.path(basePath, "checklist.html"),
+                css = file.path(basePath, 'checklist.css'),
+                definitions = definitions);
+
+
 ```
