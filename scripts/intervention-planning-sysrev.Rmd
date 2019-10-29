@@ -12,19 +12,23 @@ editor_options:
 ### Load packages
 ########################################################################
 
-require('userfriendlyscience');  ### For convenience functions, e.g. 'safeRequire'
-safeRequire('here');             ### To easily access files using 'relative paths'
-safeRequire('plyr');             ### For easily processing and restructuring data
-safeRequire('dplyr');            ### Also for easily processing and restructuring data
-safeRequire('purrr');            ### Iteration and the %||% operator
-safeRequire('lubridate');        ### For working with dates
-safeRequire("googlesheets");     ### To import data from google sheets in metabefor
-safeRequire('jsonlite');         ### To import a list of country codes in metabefor
-safeRequire('knitr');            ### For kable
-safeRequire('ufs');              ### 
-safeRequire('data.tree');        ### To work with data structured in a tree in metabefor
-safeRequire('devtools');         ### To install metabefor from github repo
-                                 ### ... Which we then do here:
+if (!require('ufs')) {              ### For convenience functions, e.g. 'checkPkgs'
+  stop("You need the 'ufs' package installed!");
+}
+ufs::checkPkgs('here');             ### To easily access files using 'relative paths'
+ufs::checkPkgs('plyr');             ### For easily processing and restructuring data
+ufs::checkPkgs('dplyr');            ### Also for easily processing and restructuring data
+ufs::checkPkgs('purrr');            ### Iteration and the %||% operator
+ufs::checkPkgs('lubridate');        ### For working with dates
+ufs::checkPkgs("googlesheets");     ### To import data from google sheets in metabefor
+ufs::checkPkgs('jsonlite');         ### To import a list of country codes in metabefor
+ufs::checkPkgs('knitr');            ### For kable
+ufs::checkPkgs('ufs');              ### 
+ufs::checkPkgs('data.tree');        ### To work with data structured in a tree in metabefor
+ufs::checkPkgs('devtools');         ### To install packages from git repos
+                                    ### ... Which we then do here:
+#devtools::install_gitlab("r-packages/metabefor");
+### Get old metabefor version
 devtools::install_github("Matherion/metabefor");
 require('metabefor');
 devtools::install_github("academy-of-behavior-change/dct");
@@ -38,11 +42,17 @@ require('dct');
 knitr::opts_chunk$set(echo = FALSE);
 knitr::opts_chunk$set(comment = NA);
 
+### Set base path
+basePath <- here::here();
+
 ### Set path for query hit exports
 queryHitExportPath <- here::here("queries");
 
 ### Set path for screening
 screeningPath <- here::here("screening");
+
+### Set path for checklist
+checklistPath <- here::here("checklist");
 
 ### Set path for any preliminary studies/work
 prePath <- here::here("pre");
@@ -87,20 +97,31 @@ sheetsURL <- paste0("https://docs.google.com/spreadsheets/d/",
 valueTemplatesSheet <- "valueTemplates";
 entitiesSheet <- "entities";
 
+###----------------------------------------------------------------------------
+###----------------------------------------------------------------------------
+### Remove these commands once metabefor is cleaned up
+###----------------------------------------------------------------------------
+###----------------------------------------------------------------------------
+require('userfriendlyscience');
+require('data.tree');
+require('dplyr');
+
+options(metabefor.debug = TRUE);
+
 fullObject <-
-  rxs_fromSpecifications(gs_url = sheetsURL,
-                         entitiesFilename = file.path(extractionScriptTemplatePath,
-                                                      "entities-local-copy.csv"),
-                         valueTemplatesFilename = file.path(extractionScriptTemplatePath,
-                                                            "valueTemplates-local-copy.csv"),
-                         localBackup = list(entities = file.path(extractionScriptTemplatePath,
-                                                                 "entities-local-copy.csv"),
-                                            valueTemplates= file.path(extractionScriptTemplatePath,
-                                                                      "valueTemplates-local-copy.csv"),
-                                            definitions = NULL),
-                         outputFile = file.path(extractionScriptTemplatePath,
-                                                "extractionScriptTemplate.rxs.Rmd"),
-                         returnFullObject = TRUE);
+  metabefor:::rxs_fromSpecifications(gs_url = sheetsURL,
+                                     entitiesFilename = file.path(extractionScriptTemplatePath,
+                                                                  "entities-local-copy.csv"),
+                                     valueTemplatesFilename = file.path(extractionScriptTemplatePath,
+                                                                        "valueTemplates-local-copy.csv"),
+                                     localBackup = list(entities = file.path(extractionScriptTemplatePath,
+                                                                             "entities-local-copy.csv"),
+                                                        valueTemplates= file.path(extractionScriptTemplatePath,
+                                                                                  "valueTemplates-local-copy.csv"),
+                                                        definitions = NULL),
+                                     outputFile = file.path(extractionScriptTemplatePath,
+                                                            "extractionScriptTemplate.rxs.Rmd"),
+                                     returnFullObject = TRUE);
 
 prepForDiagrammeR <- function(x) {
   return(gsub("[\"']",
@@ -192,8 +213,7 @@ cat("\n\n<pre><textarea rows='40' cols='124' style='font-family:monospace;font-s
 
 #### Checklist
 
-```{r checklist}
-
+```{r checklist-functions}
 
 ### http://stackoverflow.com/questions/3665115/create-a-file-in-memory-for-user-to-download-not-through-server
 
@@ -202,6 +222,72 @@ cat("\n\n<pre><textarea rows='40' cols='124' style='font-family:monospace;font-s
 ### Checklist functions
 ###############################################################################
 ###############################################################################
+
+returnPathToRoot <- function(node, considerRoot = newRootName){#rootName) {
+  res <- paste0(rev(unlist(sapply(Traverse(node, traversal='ancestor'),
+                                  function(x) return(x$name)),
+                           recursive=TRUE)), collapse="$");
+  res <- gsub(paste0("^.*\\$", considerRoot, "$"), "", res);
+  res <- gsub(paste0("^.*\\$", considerRoot, "\\$"), "\\$", res);
+  return(res);
+}
+
+isCollapsing <- function(x) {
+  if (is.null(x)) {
+    return(FALSE);
+  } else if (is.na(x)) {
+    return(FALSE);
+  } else if (nchar(x) == 0) {
+    return(FALSE);
+  } else if (trim(toupper(x)) == "OR") {
+    return(TRUE);
+  } else if (trim(toupper(x)) == "AND") {
+    return(TRUE);
+  } else {
+    stop("For 'Collapsing', value '", x, "' encountered.");
+  }
+}
+
+isRecursive <- function(x) {
+  if (is.null(x)) {
+    return(FALSE);
+  } else if (is.na(x)) {
+    return(FALSE);
+  } else if (nchar(trim(x)) == 0) {
+    return(FALSE);
+  } else if (nchar(trim(x)) > 0) {
+    return(TRUE);
+  }
+}
+
+isRepeating <- function(x) {
+  if (is.null(x)) {
+    return(FALSE);
+  } else if (is.na(x)) {
+    return(FALSE);
+  } else if (nchar(x) == 0) {
+    return(FALSE);
+  } else if (trim(toupper(x)) == "FALSE") {
+    return(FALSE);
+  } else if (trim(toupper(x)) == "TRUE") {
+    return(TRUE);
+  } else {
+    stop("For 'Repeating', value '", x, "' encountered.");
+  }
+}
+
+hasOwner <- function(x) {
+  if (is.null(x)) {
+    return(FALSE);
+  } else if (is.na(x)) {
+    return(FALSE);
+  } else if (nchar(trim(x)) == 0) {
+    return(FALSE);
+  } else if (nchar(trim(x)) > 0) {
+    return(TRUE);
+  }
+}
+
 
 generateChecklistElements <- function(node) {
 
@@ -244,10 +330,10 @@ generateChecklistElements <- function(node) {
                   
                   "<div class='metabefor-buttons'>\n",
                   "<span class='metabefor-checklist-title'>\n",
-                  node$ChecklistTitle,
+                  node$checklistTitle,
                   "</span>",
                   "<span class='metabefor-checkbox-description'>",
-                  node$ChecklistDescription,
+                  node$checklistDescription,
                   "</span>\n",
                   
                   "<div class='metabefor-book-reference' id='#metabefor-bookreference-", node$name, "'>",
@@ -294,8 +380,8 @@ renderChecklist <- function(extractionScriptTree,
                             footer = "<script>\n$(document).ready(function(){\n  $('[data-toggle=\"tooltip\"]').tooltip();\n});\n</script>",
                             cssURL = NULL,
                             definitions = NULL,
-                            definitionsTermsCol = 'Term',
-                            definitionsDefCol = 'Definition') {
+                            definitionsTermsCol = 'term',
+                            definitionsDefCol = 'definition') {
 
   checklistHeader <- "<html>\n\n<head>";
   checklistScript <- "";
@@ -485,26 +571,51 @@ renderChecklist <- function(extractionScriptTree,
 
 }
 
+```
 
+```{r checklist-production}
+
+########################################################################
+### Settings (will become parameters/arguments)
+########################################################################
+
+newRootName <- 'res';
+rootName <- 'intervention';
+recursionsName <- 'recursion';
+lvlIndentString <- "  ";
+repeatingColName <- "repeating";
+recursionColName <- "recursion";
+collapsingColName <- "collapse";
+ownerColName <- "owner";
+parentColName <- "parent";
+identifierColName <- "identifier";
+activityColName <- "title";
+descriptionColName <- "description";
+definitionsTermsCol = 'term';
+definitionsDefCol = 'definition';
+valueName <- "value";
+defaultValue <- "NA";
+recursiveElementPlaceholderName <- "recursiveElementPlaceholder";
+extractionSheet <- 'entities';
+definitionsSheet <- 'definitions';
+
+### Load checklist definitions
 tryCatch({
-  ### Then definitions sheet
-  cat0("\nReading extraction sheet from Google Docs.\n");
-  definitions <- gs_read(gs_url(sheetsURL), ws = definitionsSheet);
-  cat0("\nStoring extraction sheet in local file.\n");
+  ufs::cat0("\nReading definitions sheet from Google Docs.\n");
+  definitions <- googlesheets::gs_read(googlesheets::gs_url(sheetsURL), ws = definitionsSheet);
+  ufs::cat0("\nStoring definitions sheet in local file.\n");
   write.csv(definitions, row.names=FALSE, localdefinitionsSheetFile);
 }, error = function(e) {
-  cat0("\nReading definitions sheet from local file.\n");
+  ufs::cat0("\nReading definitions sheet from local file.\n");
   definitions <<- read.csv(localdefinitionsSheetFile,
                            stringsAsFactors = FALSE);
 });
 
-
 renderChecklist(fullObject$rxsStructure$parsedEntities$extractionScriptTree,
                 checklistRoot = 'intervention',
-                preChecklistHtml = file.path(basePath, "checklist_frontpage.html"),
-                outputFile = file.path(basePath, "checklist.html"),
-                css = file.path(basePath, 'checklist.css'),
+                preChecklistHtml = file.path(checklistPath, "checklist_frontpage.html"),
+                outputFile = file.path(checklistPath, "checklist.html"),
+                css = file.path(checklistPath, 'checklist.css'),
                 definitions = definitions);
-
 
 ```
